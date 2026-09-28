@@ -454,7 +454,7 @@
         <div class="hk-head">
           <span style="font-size:14px;">💬</span>
           <span class="hk-head-title">みんなの一言</span>
-          <span class="hk-head-sub">各自の最新・新しい順</span>
+          <span class="hk-head-sub">各自の最新・新しい順（自分以外）</span>
         </div>
         <div class="hk-list" id="hk-list"><div class="hk-empty">読み込み中…</div></div>
         <button class="hk-more" id="hk-more" style="display:none;" onclick="toggleHitokotoMore()"></button>
@@ -2072,15 +2072,19 @@ function drawHitokoto() {
   const list = document.getElementById('hk-list');
   const more = document.getElementById('hk-more');
   if (!list) return;
-  if (!hkItems.length) {
-    list.innerHTML = '<div class="hk-empty">まだ一言はありません</div>';
+  const me = hkMe();
+  // 自分の一言は記入者欄に出しているので、一覧からは除く（i は hkItems 上の位置を保持）
+  const others = hkItems.map(function(it, idx) { return { it: it, idx: idx }; })
+    .filter(function(o) { return !(me && o.it.name === me); });
+  if (!others.length) {
+    list.innerHTML = '<div class="hk-empty">まだ他の部員の一言はありません</div>';
     if (more) more.style.display = 'none';
     drawMyReactions();
     return;
   }
-  const me = hkMe();
-  const shown = hkOpenAll ? hkItems : hkItems.slice(0, HK_SHOW);
-  list.innerHTML = shown.map(function(it, i) {
+  const shown = hkOpenAll ? others : others.slice(0, HK_SHOW);
+  list.innerHTML = shown.map(function(o) {
+    const it = o.it, i = o.idx;
     const mine = !!me && it.name === me;
     const rx = it.reactions || {};
     let chips = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
@@ -2115,9 +2119,9 @@ function drawHitokoto() {
       + '</div>';
   }).join('');
   if (more) {
-    if (hkItems.length > HK_SHOW) {
+    if (others.length > HK_SHOW) {
       more.style.display = 'block';
-      more.textContent = hkOpenAll ? '閉じる ▲' : 'もっと見る（残り' + (hkItems.length - HK_SHOW) + '名） ▼';
+      more.textContent = hkOpenAll ? '閉じる ▲' : 'もっと見る（残り' + (others.length - HK_SHOW) + '名） ▼';
     } else {
       more.style.display = 'none';
     }
