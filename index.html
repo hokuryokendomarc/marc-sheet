@@ -249,7 +249,7 @@
   .diary-who-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; }
   .diary-who-name { font-size: 14px; font-weight: 700; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @keyframes hkAlertIn { from { opacity: 0; transform: translateY(-6px) scale(.97); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { .my-card.is-new { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .my-notice.is-new { animation: none; } }
   .hk-cm-form { display: flex; gap: 6px; margin-top: 7px; }
   .hk-cm-form input { flex: 1; min-width: 0; padding: 8px 10px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; font-family: inherit; color: var(--ink); }
   .hk-cm-form input:focus { border-color: var(--primary); outline: none; }
@@ -388,19 +388,15 @@
   .header-subtitle { margin-bottom: 0; }
   .tab-bar { margin-bottom: 12px; top: 8px; }
 
-  .my-card { margin: 0 0 14px; padding: 10px 14px 12px; border: 1.5px solid var(--border-soft); border-radius: var(--radius-md); background: var(--surface); scroll-margin-top: 150px; }
   .my-notice-wrap { margin: -8px 0 18px; }
-  .my-notice-body { padding: 8px 12px 10px; border: 1.5px solid var(--gold); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--surface); }
+  .my-notice-body { padding: 8px 12px 10px; border: 1.5px solid var(--border-soft); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--surface); }
   .my-notice-body .my-text { margin: 0 0 6px; }
   .my-notice-body .my-rx { margin: 0; }
   .my-notice.open { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
-  .my-notice { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 40px !important; margin: 0; padding: 8px 12px; border: 1.5px solid var(--gold); border-radius: var(--radius-sm); background: var(--gold-pale); color: #8a6200; font-family: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer; animation: hkAlertIn .45s cubic-bezier(.22,1.4,.36,1) both; }
+  .my-notice.is-new + .my-notice-body { border-color: var(--gold); }
+  .my-notice { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 40px !important; margin: 0; padding: 8px 12px; border: 1.5px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--surface); color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer; }
+  .my-notice.is-new { border-color: var(--gold); background: var(--gold-pale); color: #8a6200; animation: hkAlertIn .45s cubic-bezier(.22,1.4,.36,1) both; }
   .my-notice .go { margin-left: auto; }
-  .my-card.is-new { border-color: var(--gold); background: var(--gold-pale); animation: hkAlertIn .45s cubic-bezier(.22,1.4,.36,1) both; }
-  .my-head { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--ink-muted); }
-  .my-link { margin-left: auto; min-height: 28px !important; padding: 0 2px; border: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: 700; color: var(--primary); cursor: pointer; position: relative; }
-  .my-link::after { content: ''; position: absolute; top: -8px; bottom: -8px; left: -8px; right: -8px; }
-  .my-link.is-new { color: #8a6200; }
   .my-cheer { display: inline-block; font-size: 13px; animation: myCheer 1s ease .3s 2; }
   @keyframes myCheer { 0%,100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-15deg) scale(1.2); } 60% { transform: rotate(10deg) scale(1.1); } }
   @media (prefers-reduced-motion: reduce) { .my-cheer { animation: none; } }
@@ -461,7 +457,7 @@
         <span class="diary-who-name" id="diary-who-name"></span>
         <button type="button" class="diary-who-edit" onclick="editDiaryName()">変更</button>
       </div>
-      <!-- 自分の一言に反応が届いたときだけ出す1行のお知らせ（押すと下のカードへ） -->
+      <!-- 自分の一言に届いた反応（1行。押すとその場で一言と反応が開く） -->
       <div class="my-notice-wrap" id="my-notice-wrap" style="display:none;">
         <button type="button" class="my-notice" id="my-notice" onclick="hkToggleNotice()"></button>
         <div class="my-notice-body" id="my-notice-body" style="display:none;"></div>
@@ -560,8 +556,6 @@
 
       <!-- みんなの一言（提出ボタンの下。先に読むと自分の振り返りが引っ張られるため） -->
       <div class="hk-divider" aria-hidden="true"></div>
-      <!-- あなたの一言カード（前回までに書いた自分の一言と、届いた反応） -->
-      <div class="my-card" id="diary-who-names" style="display:none;"></div>
       <div class="hk-wrap">
         <div class="hk-head">
           <span style="font-size:14px;">💬</span>
@@ -1671,7 +1665,7 @@ function confirmDiaryName() {
   if (!el || !el.value.trim()) { showToast('⚠ 名前を入力してください'); if (el) el.focus(); return; }
   onDiaryNameInput(el);
   _diaryNameEditing = false;
-  if (typeof hkMyOpen !== 'undefined') { hkMyOpen = false; hkJustSeen = null; hkNoticeOpen = false; }
+  if (typeof hkNoticeOpen !== 'undefined') { hkJustSeen = null; hkNoticeOpen = false; }
   refreshDiaryWho();
   if (typeof hkLoadMyComments === 'function') hkLoadMyComments();
 }
@@ -2168,7 +2162,6 @@ function hkSeenMark(id, k, ms) {
 }
 // 「あなたの一言」カード：自分の一言を常時表示。届いた反応は見出し右の「〇人から届きました ›」を押すと開く。
 // 前回見た後に届いたものがあるときはカードを金色にし、開いたら既読にする（開いた時の新着の名前は太字）。
-let hkMyOpen = false;       // 反応の一覧を開いているか
 let hkNoticeOpen = false;   // 上部のお知らせを開いているか
 let hkJustSeen = null;      // 開いた時点で新着だった人（このページ表示中は太字のまま）
 function hkMyAllPeople(mine) {
@@ -2178,72 +2171,47 @@ function hkMyAllPeople(mine) {
   return who;
 }
 function drawMyReactions() {
-  const card = document.getElementById('diary-who-names');
-  if (!card) return;
   const me = hkMe();
   const mine = hkItems.find(function(x) { return me && x.name === me; });
   // みんなの一言の呼びかけ：自分の一言に反応をもらったことがある人にだけ出す（他の部員の一言があるとき）
   const nudge = document.getElementById('hk-nudge');
-  if (nudge) nudge.style.display = 'none';
   const nwrap = document.getElementById('my-notice-wrap');
   const notice = document.getElementById('my-notice');
   const nbody = document.getElementById('my-notice-body');
-  if (nwrap) nwrap.style.display = 'none';
-  if (!mine) { card.style.display = 'none'; hkMyOpen = false; return; }
+  if (nudge) nudge.style.display = 'none';
+  if (!nwrap || !notice || !nbody) return;
+  nwrap.style.display = 'none';
+  if (!mine || !mine.id) { hkNoticeOpen = false; return; }
   if (hkMyCommentsId !== mine.id) hkMyComments = [];
+  // コメントの読み込みが終わるまでは出さない（途中の人数や色が一瞬出て切り替わるのを防ぐ）
+  if (hkMyCommentsId !== mine.id) return;
   const rx = mine.reactions || {};
   const all = hkMyAllPeople(mine);
-  // 新着はコメントを読み込み終えてから判定する（途中で判定すると数がずれるため）
-  const ready = hkMyCommentsId === mine.id;
-  const nw = (ready && mine.id) ? hkNewSince(mine) : { who: [], types: [], cm: 0 };
-  const hasNew = nw.who.length > 0;
-  let link = '';
-  // コメントの読み込みが終わるまでは人数を出さない（途中の人数や色が一瞬出て切り替わるのを防ぐ）
-  if (!ready) {
-    card.className = 'my-card';
-    card.innerHTML = '<div class="my-head"><span>' + escH(mine.date) + '　あなたの一言</span></div><div class="my-text">' + escH(mine.text) + '</div>';
-    card.style.display = 'block';
-    return;
-  }
-  if (nudge && all.length && hkItems.some(function(x) { return x.name !== me; })) nudge.style.display = 'block';
+  if (!all.length) { hkNoticeOpen = false; return; } // 反応が1件もなければ何も出さない
+  if (nudge && hkItems.some(function(x) { return x.name !== me; })) nudge.style.display = 'block';
+  const nw = hkNewSince(mine);
   // 開いて既読にした後も、このページを見ている間は「届きました 🎉」のまま（押した直後に表示が変わらないように）
   const justN = (hkJustSeen || []).filter(function(x) { return all.indexOf(x) >= 0; }).length;
-  const newN = hasNew ? Math.max(nw.who.length, justN) : justN;
-  if (newN) link = '<button type="button" class="my-link is-new" onclick="hkToggleMy()">' + newN + '人から届きました <span class="my-cheer" aria-hidden="true">🎉</span> ' + (hkMyOpen ? '▲' : '›') + '</button>';
-  else if (all.length) link = '<button type="button" class="my-link" onclick="hkToggleMy()">' + all.length + '人から届いています ' + (hkMyOpen ? '▲' : '›') + '</button>';
-  const bold = hkJustSeen || [];
-  const nm = function(n) { const d = escH(hkDn(n)); return bold.indexOf(n) >= 0 ? '<b class="my-new">' + d + '</b>' : d; };
-  let lines = '';
-  if (hkMyOpen && all.length) {
-    lines = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
+  const newN = Math.max(nw.who.length, justN);
+  const go = '<span class="go">' + (hkNoticeOpen ? '閉じる ▲' : (newN ? '見る ›' : '›')) + '</span>';
+  notice.className = 'my-notice' + (newN ? ' is-new' : '') + (hkNoticeOpen ? ' open' : '');
+  notice.innerHTML = newN
+    ? '<span class="my-cheer" aria-hidden="true">🎉</span>' + escH(mine.date) + 'の一言に' + newN + '人から届きました' + go
+    : escH(mine.date) + 'の一言に' + all.length + '人から届いています' + go;
+  if (hkNoticeOpen) {
+    const bold = hkJustSeen || [];
+    const nm = function(n) { const d = escH(hkDn(n)); return bold.indexOf(n) >= 0 ? '<b class="my-new">' + d + '</b>' : d; };
+    const lines = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
       return '<div class="my-line">' + t.icon + ' ' + rx[t.k].map(nm).join('、') + '<span class="my-lbl">が' + t.label + '</span></div>';
     }).join('') + hkMyComments.map(function(c) {
       return '<div class="my-line">💬 ' + nm(c.from) + '「' + escH(c.text) + '」</div>';
     }).join('');
+    nbody.innerHTML = '<div class="my-text">' + escH(mine.text) + '</div><div class="my-rx">' + lines + '</div>';
+    nbody.style.display = 'block';
+  } else {
+    nbody.style.display = 'none';
   }
-  // 未読がある時、またはこの画面でお知らせから開いた時に表示。押すとその場で開閉（画面は移動しない）
-  if (nwrap && notice && nbody && (hasNew || hkNoticeOpen)) {
-    const n = hasNew ? nw.who.length : newN;
-    notice.className = 'my-notice' + (hkNoticeOpen ? ' open' : '');
-    notice.innerHTML = '<span aria-hidden="true">🎉</span>' + escH(mine.date) + 'の一言に' + n + '人から届きました<span class="go">' + (hkNoticeOpen ? '閉じる ▲' : '見る ›') + '</span>';
-    if (hkNoticeOpen) {
-      const allLines = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
-        return '<div class="my-line">' + t.icon + ' ' + rx[t.k].map(nm).join('、') + '<span class="my-lbl">が' + t.label + '</span></div>';
-      }).join('') + hkMyComments.map(function(c) {
-        return '<div class="my-line">💬 ' + nm(c.from) + '「' + escH(c.text) + '」</div>';
-      }).join('');
-      nbody.innerHTML = '<div class="my-text">' + escH(mine.text) + '</div>' + (allLines ? '<div class="my-rx">' + allLines + '</div>' : '');
-      nbody.style.display = 'block';
-    } else {
-      nbody.style.display = 'none';
-    }
-    nwrap.style.display = 'block';
-  }
-  card.className = 'my-card' + (hasNew ? ' is-new' : '');
-  card.innerHTML = '<div class="my-head"><span>' + escH(mine.date) + '　あなたの一言</span>' + link + '</div>'
-    + '<div class="my-text">' + escH(mine.text) + '</div>'
-    + (lines ? '<div class="my-rx">' + lines + '</div>' : '');
-  card.style.display = 'block';
+  nwrap.style.display = 'block';
 }
 // 開いている状態で見えている新着を既読にする（コメントの読み込みが後から終わった場合も呼ばれる）
 function hkMarkMySeen(mine) {
@@ -2254,22 +2222,13 @@ function hkMarkMySeen(mine) {
   HK_TYPES.forEach(function(t) { hkSeenMark(mine.id, t.k, (mine.lastRx || {})[t.k] || 0); });
   if (hkMyCommentsId === mine.id) hkSeenMark(mine.id, 'cm', hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0));
 }
-// 上部のお知らせを押す：その場で内容を開閉する（既読にする）
+// 上部の1行を押す：その場で自分の一言と届いた反応を開閉する（開いたら既読）
 function hkToggleNotice() {
   const me = hkMe();
   const mine = hkItems.find(function(x) { return me && x.name === me; });
   if (!mine) return;
   hkNoticeOpen = !hkNoticeOpen;
   if (hkNoticeOpen) hkMarkMySeen(mine);
-  drawMyReactions();
-}
-// 「〇人から届きました」を押す：一覧を開閉。開いたときに新着を既読にする
-function hkToggleMy() {
-  const me = hkMe();
-  const mine = hkItems.find(function(x) { return me && x.name === me; });
-  if (!mine) return;
-  hkMyOpen = !hkMyOpen;
-  if (hkMyOpen) hkMarkMySeen(mine);
   drawMyReactions();
 }
 // 前回見た後に届いたリアクション・コメントの送り主を返す
@@ -2359,7 +2318,7 @@ function hkLoadMyComments() {
     if (!now || now.id !== reqId) return; // 取得中に名前が変わった場合は捨てる
     hkMyComments = (j.status === 'ok' && Array.isArray(j.comments)) ? j.comments : [];
     hkMyCommentsId = reqId;
-    if (hkMyOpen || hkNoticeOpen) hkMarkMySeen(now); // 開いたまま届いたコメントも既読に
+    if (hkNoticeOpen) hkMarkMySeen(now); // 開いたまま届いたコメントも既読に
     drawMyReactions();
   })
   .catch(function() {
