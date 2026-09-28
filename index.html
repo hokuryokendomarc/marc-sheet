@@ -164,6 +164,8 @@
   .tab-btn { flex: 1; padding: 12px 6px; border: none; border-radius: var(--radius-lg); background: transparent; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 700; color: var(--ink-muted); cursor: pointer; transition: all 0.22s cubic-bezier(.22,1,.36,1); letter-spacing: .02em; display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 44px; -webkit-tap-highlight-color: transparent; white-space: nowrap; }
   .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(26,58,107,0.25); }
   .tab-btn:not(.active):hover { background: var(--bg-warm); color: var(--ink-soft); }
+  .tab-bar { flex-wrap: wrap; }
+  .ai-link.ai-link-intab { flex: 1 1 100%; margin: 0; padding: 11px 16px; }
   .tab-panel { display: none; }
   .tab-panel.tab-active { display: block; }
 
@@ -240,6 +242,24 @@
   .diary-date { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--ink-muted); background: var(--bg-warm); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
   .diary-sub { font-size: 11px; color: var(--ink-muted); margin-bottom: 16px; }
   .diary-name-row { margin-bottom: 18px; }
+  .diary-name-inline { display: flex; gap: 8px; }
+  .diary-name-inline .diary-name-input { flex: 1; min-width: 0; }
+  .diary-name-ok { flex-shrink: 0; padding: 0 16px; border: none; border-radius: var(--radius-sm); background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .diary-who { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 10px; padding: 6px 12px; background: var(--bg-warm); border-radius: var(--radius-sm); }
+  .diary-who-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; }
+  .diary-who-name { font-size: 14px; font-weight: 700; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .diary-who-names { margin: -4px 0 10px; }
+  .hk-cm-form { display: flex; gap: 6px; margin-top: 7px; }
+  .hk-cm-form input { flex: 1; min-width: 0; padding: 8px 10px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; font-family: inherit; color: var(--ink); }
+  .hk-cm-form input:focus { border-color: var(--primary); outline: none; }
+  .hk-cm-send { flex-shrink: 0; min-height: 40px !important; padding: 0 14px; border: none; border-radius: var(--radius-sm); background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .hk-cm-count { font-size: 10px; color: var(--ink-muted); text-align: right; margin-top: 3px; }
+  .hk-cm-line b { color: var(--primary); margin-right: 6px; }
+  .diary-who-mine { flex: 1 1 100%; font-size: 11px; color: var(--ink-soft); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -2px; cursor: pointer; }
+  .diary-who-mine.open { white-space: normal; }
+  .diary-who-mine b { color: var(--ink-muted); font-weight: 700; margin-right: 6px; }
+  .hk-new-dot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: #e0393e; border: 2px solid var(--bg-warm); }
+  .diary-who-edit { flex-shrink: 0; min-height: 32px !important; padding: 0 12px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   .diary-name-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); letter-spacing: .06em; margin-bottom: 6px; display: block; }
   .diary-name-input { width: 100%; padding: 11px 14px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; color: var(--ink); }
   .diary-name-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,58,107,0.08); outline: none; }
@@ -332,6 +352,40 @@
     .lead-cat { width: 64px; }
     .lead-role { width: 90px; font-size: 11px; }
   }
+  /* ===== みんなの一言 ===== */
+  .hk-wrap { border: 1.5px solid rgba(26,58,107,0.22); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 18px; background: var(--surface); }
+  .hk-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; background: rgba(26,58,107,0.06); }
+  .hk-head-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: .04em; }
+  .hk-head-sub { margin-left: auto; font-size: 10px; color: var(--ink-muted); }
+  .hk-list { padding: 2px 14px; }
+  .hk-item { padding: 7px 0 8px; border-bottom: 1px solid var(--border-soft); }
+  .hk-item:last-child { border-bottom: none; }
+  .hk-item.mine { background: var(--gold-pale); margin: 0 -14px; padding: 7px 14px 8px; }
+  .hk-meta { font-size: 11px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; min-height: 28px; }
+  .hk-meta-who { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hk-date { color: var(--primary); font-weight: 700; margin-right: 8px; }
+  .hk-name { font-weight: 600; color: var(--ink-soft); }
+  .hk-text { font-size: 13px; color: var(--ink); line-height: 1.6; margin-top: 1px; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+  .hk-text.open { display: block; }
+  .hk-rx { display: flex; gap: 4px; flex-shrink: 0; }
+  .hk-chip { min-height: 26px !important; height: 26px; padding: 0 8px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; position: relative; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .hk-chip::after { content: ''; position: absolute; top: -7px; bottom: -7px; left: 0; right: 0; }
+  .hk-chip.on { border-color: var(--primary); background: rgba(26,58,107,0.08); color: var(--primary); }
+  .hk-chip.hk-add { width: 30px; padding: 0; justify-content: center; color: var(--ink-muted); font-size: 14px; }
+  .hk-names { font-size: 11px; color: var(--ink-soft); background: var(--bg-warm); border-radius: 6px; padding: 6px 10px; margin-top: 7px; line-height: 1.6; }
+  .hk-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  .hk-more { width: 100%; min-height: 40px !important; border: none; border-top: 1px solid var(--border-soft); background: transparent; color: var(--ink-muted); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  .hk-empty { font-size: 12px; color: var(--ink-muted); padding: 12px 0; text-align: center; }
+
+  /* ===== ヘッダーを低く（Q1を最初の画面に入れるため）===== */
+  body { padding-top: 12px; }
+  .header { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; align-items: center; text-align: left; padding: 16px 18px 14px; margin-bottom: 12px; }
+  .header-kamon { grid-row: 1 / 4; width: 44px; height: 44px; margin: 0; }
+  .header-en { font-size: 9px; letter-spacing: 0.3em; margin-bottom: 2px; }
+  .header-title { font-size: 20px !important; margin-bottom: 2px; }
+  .header-subtitle { margin-bottom: 0; }
+  .tab-bar { margin-bottom: 12px; top: 8px; }
+
 /* ===LEADERS_CSS_INSERT=== */
 </style>
 </head>
@@ -350,20 +404,14 @@
     <div class="header-en">KENDO CLUB — MARC SHEET</div>
     <h1 class="header-title">剣道部 <span>MARC</span>シート</h1>
     <div class="header-subtitle">思考とAIの架け橋</div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-label" id="progressLabel">記入率 0%</div>
   </div>
 
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('news', this)">📣 自己管理</button>
     <button class="tab-btn" onclick="switchTab('profile', this)">👤 自己理解</button>
     <button class="tab-btn" onclick="switchTab('log', this)">⚔ 稽古ログ</button>
-  </div>
-
-  <!-- お知らせタブ -->
-  <div class="tab-panel tab-active" id="tab-news">
-    <!-- 専用AI（NotebookLM）リンク -->
-    <a href="https://notebooklm.google.com/" target="_blank" class="ai-link">
+    <!-- 専用AI（NotebookLM）：タブと同じ列に配置。押すと別タブでNotebookLMを開く -->
+    <a href="https://notebooklm.google.com/" target="_blank" rel="noopener" class="ai-link ai-link-intab">
       <span class="ai-link-icon">✨</span>
       <div class="ai-link-body">
         <div class="ai-link-title">専用AIに相談する</div>
@@ -371,7 +419,10 @@
       </div>
       <span class="ai-link-arrow">›</span>
     </a>
+  </div>
 
+  <!-- お知らせタブ -->
+  <div class="tab-panel tab-active" id="tab-news">
     <!-- 剣道日記（成長日誌） -->
     <div class="diary-wrap">
       <div class="diary-head">
@@ -381,9 +432,32 @@
       </div>
       <div class="diary-sub">今日の稽古をふりかえって記録しよう</div>
 
-      <div class="diary-name-row">
-        <label class="diary-name-label">名前<span style="color:var(--red);margin-left:2px;">*</span></label>
-        <input type="text" id="diary-name" class="diary-name-input" placeholder="名前を入力" oninput="onDiaryNameInput(this)">
+      <!-- 記入者：保存済みなら表示のみ、未保存・変更時だけ入力欄 -->
+      <div class="diary-who" id="diary-who" style="display:none;">
+        <span class="diary-who-label">記入者</span>
+        <span class="diary-who-name" id="diary-who-name"></span>
+        <span class="hk-rx" id="diary-who-rx"></span>
+        <button type="button" class="diary-who-edit" onclick="editDiaryName()">変更</button>
+        <div class="diary-who-mine" id="diary-who-mine" style="display:none;" onclick="this.classList.toggle('open')"></div>
+      </div>
+      <div class="hk-names diary-who-names" id="diary-who-names" style="display:none;"></div>
+      <div class="diary-name-row" id="diary-name-row">
+        <label class="diary-name-label" for="diary-name">名前<span style="color:var(--red);margin-left:2px;">*</span></label>
+        <div class="diary-name-inline">
+          <input type="text" id="diary-name" class="diary-name-input" placeholder="名前を入力" oninput="onDiaryNameInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmDiaryName();}">
+          <button type="button" class="diary-name-ok" onclick="confirmDiaryName()">決定</button>
+        </div>
+      </div>
+
+      <!-- みんなの一言 -->
+      <div class="hk-wrap">
+        <div class="hk-head">
+          <span style="font-size:14px;">💬</span>
+          <span class="hk-head-title">みんなの一言</span>
+          <span class="hk-head-sub">各自の最新・新しい順</span>
+        </div>
+        <div class="hk-list" id="hk-list"><div class="hk-empty">読み込み中…</div></div>
+        <button class="hk-more" id="hk-more" style="display:none;" onclick="toggleHitokotoMore()"></button>
       </div>
 
       <!-- Q1 -->
@@ -464,7 +538,8 @@
       <!-- 自由記述 -->
       <div class="diary-q">
         <div class="diary-q-label">＋ 今日、残しておきたいことがあれば一言</div>
-        <textarea id="diary-free" class="diary-free" placeholder="自由に記入"></textarea>
+        <div class="diary-q-hint">書いた一言は、名前付きで上の「みんなの一言」に表示されます</div>
+        <textarea id="diary-free" class="diary-free" placeholder="自由に記入（みんなに公開されます）"></textarea>
       </div>
 
       <button class="diary-submit-btn" id="diary-submit-btn" onclick="submitDiary()">✦ 提出する</button>
@@ -883,8 +958,11 @@ function updateProgress() {
   let filled = 0;
   required.forEach(el => { if (el.value.trim()) filled++; });
   const pct = Math.round((filled / required.length) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = '記入率 ' + pct + '%';
+  // 記入率バーはヘッダーから削除済み（要素がなければ何もしない）
+  const pf = document.getElementById('progressFill');
+  const pl = document.getElementById('progressLabel');
+  if (pf) pf.style.width = pct + '%';
+  if (pl) pl.textContent = '記入率 ' + pct + '%';
 }
 
 let _toastTimer = null;
@@ -1328,6 +1406,8 @@ function loadNews() {
       renderAgenda(data.agenda || null);
       window._allDeclares = data.declares || {};
       renderTeams(data.teams || []);
+      hkDisplayNames = data.displayNames || {};
+      renderHitokoto(data.hitokoto || []);
     }
   })
   .catch(function(){ /* ネットワーク失敗時は静的表示のまま */ });
@@ -1532,6 +1612,41 @@ function onDiaryNameInput(el) {
   if (typeof marc !== 'undefined') marc.name = vNorm;
 }
 
+// ===== 記入者表示 =====
+// 名前が保存済み → 「記入者：〇〇　変更」の表示のみ。未保存・変更中 → 入力欄を出す。
+let _diaryNameEditing = false;
+function refreshDiaryWho() {
+  const nameEl = document.getElementById('diary-name');
+  const who = document.getElementById('diary-who');
+  const row = document.getElementById('diary-name-row');
+  if (!nameEl || !who || !row) return;
+  const v = (nameEl.value || '').trim();
+  if (v && !_diaryNameEditing) {
+    document.getElementById('diary-who-name').textContent = v;
+    who.style.display = 'flex';
+    row.style.display = 'none';
+  } else {
+    who.style.display = 'none';
+    row.style.display = 'block';
+  }
+  if (typeof drawHitokoto === 'function') drawHitokoto(); // 自分の行の色を名前に合わせて更新
+}
+function editDiaryName() {
+  _diaryNameEditing = true;
+  refreshDiaryWho();
+  const el = document.getElementById('diary-name');
+  if (el) { el.focus(); el.select(); }
+}
+function confirmDiaryName() {
+  const el = document.getElementById('diary-name');
+  if (!el || !el.value.trim()) { showToast('⚠ 名前を入力してください'); if (el) el.focus(); return; }
+  onDiaryNameInput(el);
+  _diaryNameEditing = false;
+  hkMineOpen = null;
+  refreshDiaryWho();
+  if (typeof hkLoadMyComments === 'function') hkLoadMyComments();
+}
+
 // 起動時：キャッシュ→GASの順で名前を復元（二重）
 // 今日の日付をタイトル横に表示（例：9/3(水)）
 function setDiaryDate() {
@@ -1550,6 +1665,7 @@ function loadDiaryName() {
   // ① まずキャッシュから即時復元
   const cached = (typeof LS !== 'undefined') ? (LS.get(LS_NAME) || '') : '';
   if (cached) nameEl.value = cached;
+  refreshDiaryWho();
   // ② GASからも照合（自己理解データに氏名があれば、それを正とする）
   if (cached && cached.length >= 2) {
     fetch(GAS_URL + '?' + new URLSearchParams({ name: cached }).toString(), { method: 'GET' })
@@ -1559,7 +1675,7 @@ function loadDiaryName() {
         const json = JSON.parse(text);
         if (json.status === 'ok' && json.data && json.data['氏名']) {
           // GAS側に氏名がある場合はそれで上書き（表記ゆれ対策）
-          if (!nameEl.value.trim()) nameEl.value = json.data['氏名'];
+          if (!nameEl.value.trim()) { nameEl.value = json.data['氏名']; refreshDiaryWho(); }
         }
       } catch(e) {}
     })
@@ -1571,7 +1687,8 @@ function loadDiaryName() {
 function submitDiary() {
   const nameEl = document.getElementById('diary-name');
   const name = (nameEl.value || '').trim();
-  if (!name) { showToast('⚠ 名前を入力してください'); nameEl.focus(); return; }
+  if (!name) { showToast('⚠ 名前を入力してください'); editDiaryName(); return; }
+  if (_diaryNameEditing) confirmDiaryName();
 
   // Q4/Q5の選択を収集
   const q4 = Array.from(document.querySelectorAll('.diary-checks[data-q="q4"] .diary-check-btn.selected'))
@@ -1607,6 +1724,7 @@ function submitDiary() {
   })
   .then(function(){
     // 名前キャッシュは維持。名前以外をクリアして次の入力に備える。
+    hkAfterSubmit(name, free);
     resetDiaryForm();
     showToast('✓ 提出しました！');
     btn.textContent = '✦ 提出する'; btn.disabled = false;
@@ -1878,6 +1996,308 @@ function applyLeadersData() {
 }
 
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// ===== みんなの一言（各自の最新1件・リアクション付き） =====
+// GAS の getNews が返す hitokoto: [{ id, name, date, text, reactions:{nice:[],wakaru:[],sanko:[]} }]
+const HK_TYPES = [
+  { k: 'nice',   icon: '👍', label: 'ナイス' },
+  { k: 'wakaru', icon: '🤝', label: 'わかる' },
+  { k: 'sanko',  icon: '💡', label: '参考になる' }
+];
+const HK_SHOW    = 3;                  // 初期表示の人数（4件目以降は「もっと見る」）
+const LS_TEACHER = 'marc_teacher_key'; // 先生モードのキー（先生の端末にだけ保存）
+let hkItems = [], hkOpenAll = false, hkOpenNames = null, hkOpenPicker = null;
+let hkMineOpen = null;   // 記入者欄で開いているリアクション種類
+let hkDisplayNames = {}; // 部員名簿シートの「氏名→表示名」（GASから受け取る）
+function hkDn(n) { return hkDisplayNames[n] || n; } // 名簿に無ければフルネーム
+
+function hkTeacherKey() { return LS.get(LS_TEACHER) || ''; }
+function hkMe() {
+  if (hkTeacherKey()) return '先生';
+  return String(LS.get(LS_NAME) || '').replace(/[\u3000\s]+/g, '');
+}
+
+// 先生モードの設定：GASで確認してから保存する
+function hkSetTeacherKey(key) {
+  key = String(key || '').trim();
+  if (!key) { LS.remove(LS_TEACHER); showToast('先生モードを解除しました'); drawHitokoto(); return; }
+  fetch(GAS_URL + '?' + new URLSearchParams({ action: 'checkTeacher', key: key }).toString())
+  .then(function(r) { return r.json(); })
+  .then(function(j) {
+    if (j.status === 'ok' && j.valid) { LS.set(LS_TEACHER, key); showToast('✓ 先生モードになりました'); drawHitokoto(); }
+    else { showToast('⚠ 先生キーが正しくありません'); }
+  })
+  .catch(function() { showToast('⚠ 確認できませんでした。通信環境を確認してください'); });
+}
+
+// 設定方法A：URLに ?teacher=キー を付けて一度開く（URLからは自動で消える）
+(function() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const t = p.get('teacher');
+    if (t !== null) {
+      p.delete('teacher');
+      const q = p.toString();
+      history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+      hkSetTeacherKey(t);
+    }
+  } catch(e) {}
+})();
+
+// 設定方法B：「剣道日記」の見出しを3秒以内に5回タップ → キー入力（ホーム画面アプリ用）
+(function() {
+  const title = document.querySelector('.diary-title');
+  if (!title) return;
+  let taps = 0, timer = null;
+  title.addEventListener('click', function() {
+    taps++;
+    clearTimeout(timer);
+    timer = setTimeout(function() { taps = 0; }, 3000);
+    if (taps >= 5) {
+      taps = 0;
+      const now = hkTeacherKey() ? '（空欄で決定すると先生モードを解除）' : '';
+      const v = prompt('先生キーを入力してください' + now, '');
+      if (v !== null) hkSetTeacherKey(v);
+    }
+  });
+})();
+
+function renderHitokoto(items) {
+  hkItems = Array.isArray(items) ? items : [];
+  hkOpenNames = null; hkOpenPicker = null; hkCommentFor = null;
+  drawHitokoto();
+  hkLoadMyComments();
+}
+
+function drawHitokoto() {
+  const list = document.getElementById('hk-list');
+  const more = document.getElementById('hk-more');
+  if (!list) return;
+  if (!hkItems.length) {
+    list.innerHTML = '<div class="hk-empty">まだ一言はありません</div>';
+    if (more) more.style.display = 'none';
+    drawMyReactions();
+    return;
+  }
+  const me = hkMe();
+  const shown = hkOpenAll ? hkItems : hkItems.slice(0, HK_SHOW);
+  list.innerHTML = shown.map(function(it, i) {
+    const mine = !!me && it.name === me;
+    const rx = it.reactions || {};
+    let chips = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
+      const on = !!me && rx[t.k].indexOf(me) >= 0;
+      return '<button class="hk-chip' + (on ? ' on' : '') + '" onclick="hkToggleNames(' + i + ',\'' + t.k + '\')">' + t.icon + ' ' + rx[t.k].length + '</button>';
+    }).join('');
+    if (!mine && it.id) chips += '<button class="hk-chip hk-add" aria-label="リアクションする" onclick="hkTogglePicker(' + i + ')">＋</button>';
+    let extra = '';
+    if (hkOpenNames && hkOpenNames.i === i) {
+      const t = HK_TYPES.find(function(x) { return x.k === hkOpenNames.k; });
+      const names = rx[hkOpenNames.k] || [];
+      if (t && names.length) extra = '<div class="hk-names">' + t.icon + ' ' + t.label + '：' + names.map(function(n){ return escH(hkDn(n)); }).join('、') + '</div>';
+    }
+    if (hkOpenPicker === i) {
+      extra = '<div class="hk-picker">' + HK_TYPES.map(function(t) {
+        const on = !!me && (rx[t.k] || []).indexOf(me) >= 0;
+        return '<button class="hk-chip' + (on ? ' on' : '') + '" onclick="hkReact(' + i + ',\'' + t.k + '\')">' + t.icon + ' ' + t.label + '</button>';
+      }).join('') + '<button class="hk-chip' + (hkCommentFor === i ? ' on' : '') + '" onclick="hkOpenComment(' + i + ')">💬 コメント</button></div>';
+      if (hkCommentFor === i) {
+        extra += '<div class="hk-cm-form">'
+          + '<input type="text" id="hk-cm-input" maxlength="' + HK_CM_MAX + '" placeholder="' + escH(hkDn(it.name)).replace(/"/g, '&quot;') + 'さんにだけ届きます（' + HK_CM_MAX + '字まで）" oninput="hkCmCount(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();hkSendComment(' + i + ');}">'
+          + '<button class="hk-cm-send" onclick="hkSendComment(' + i + ')">送る</button>'
+          + '</div><div class="hk-cm-count" id="hk-cm-count">0 / ' + HK_CM_MAX + '</div>';
+      }
+    }
+    // 1行目：日付・名前（左）＋リアクション（右）／2行目：一言（2行まで、タップで全文）
+    return '<div class="hk-item' + (mine ? ' mine' : '') + '">'
+      + '<div class="hk-meta"><span class="hk-meta-who"><span class="hk-date">' + escH(it.date) + '</span><span class="hk-name">' + escH(hkDn(it.name)) + '</span></span>'
+      + (chips ? '<span class="hk-rx">' + chips + '</span>' : '') + '</div>'
+      + '<div class="hk-text" onclick="this.classList.toggle(\'open\')">' + escH(it.text) + '</div>'
+      + extra
+      + '</div>';
+  }).join('');
+  if (more) {
+    if (hkItems.length > HK_SHOW) {
+      more.style.display = 'block';
+      more.textContent = hkOpenAll ? '閉じる ▲' : 'もっと見る（残り' + (hkItems.length - HK_SHOW) + '名） ▼';
+    } else {
+      more.style.display = 'none';
+    }
+  }
+  drawMyReactions();
+}
+
+// 記入者欄：自分の一言へのリアクション（種類ごと）と、自分の一言（2行目に常時・小さく）を表示。
+// 前回見た後に付いたリアクションには赤い点（新着）を付け、開いたら消す。
+const LS_HK_SEEN = 'marc_hk_seen'; // {id, t:{nice:ms,...}} 自分の一言のどの時点まで見たか
+function hkSeenGet(id) {
+  try { const o = JSON.parse(LS.get(LS_HK_SEEN) || '{}'); return (o.id === id && o.t) ? o.t : {}; } catch(e) { return {}; }
+}
+function hkSeenMark(id, k, ms) {
+  const t = hkSeenGet(id); t[k] = ms;
+  LS.set(LS_HK_SEEN, JSON.stringify({ id: id, t: t }));
+}
+function drawMyReactions() {
+  const box = document.getElementById('diary-who-rx');
+  const panel = document.getElementById('diary-who-names');
+  if (!box || !panel) return;
+  const me = hkMe();
+  const mine = hkItems.find(function(x) { return me && x.name === me; });
+  const mineLine = document.getElementById('diary-who-mine');
+  if (!mine) { box.innerHTML = ''; panel.style.display = 'none'; hkMineOpen = null; if (mineLine) mineLine.style.display = 'none'; return; }
+  // 自分の一言：記入者欄の2行目に小さく常時表示（1行で省略、タップで全文）
+  if (mineLine) {
+    mineLine.innerHTML = '<b>あなたの一言 ' + escH(mine.date) + '</b>' + escH(mine.text);
+    mineLine.style.display = 'block';
+  }
+  const rx = mine.reactions || {};
+  const last = mine.lastRx || {};
+  const seen = hkSeenGet(mine.id);
+  const types = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; });
+  if (hkMyCommentsId !== mine.id) hkMyComments = []; // 別人・古い一言のコメントは出さない
+  box.innerHTML = types.map(function(t) {
+    const isNew = (last[t.k] || 0) > (seen[t.k] || 0);
+    return '<button class="hk-chip' + (hkMineOpen === t.k ? ' on' : '') + '" onclick="toggleMyReaction(\'' + t.k + '\')" aria-label="自分の一言への' + t.label + (isNew ? '（新着あり）' : '') + '">'
+      + t.icon + ' ' + rx[t.k].length + (isNew ? '<span class="hk-new-dot" aria-hidden="true"></span>' : '') + '</button>';
+  }).join('') + (hkMyComments.length ? (function() {
+    const lastCm = hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0);
+    const isNew = lastCm > (seen.cm || 0);
+    return '<button class="hk-chip' + (hkMineOpen === 'cm' ? ' on' : '') + '" onclick="toggleMyReaction(\'cm\')" aria-label="自分へのコメント' + (isNew ? '（新着あり）' : '') + '">💬 ' + hkMyComments.length
+      + (isNew ? '<span class="hk-new-dot" aria-hidden="true"></span>' : '') + '</button>';
+  })() : '');
+  let html = '';
+  const t = HK_TYPES.find(function(x) { return x.k === hkMineOpen; });
+  if (hkMineOpen === 'cm' && hkMyComments.length) {
+    html = hkMyComments.map(function(c) {
+      return '<div class="hk-cm-line"><b>' + escH(c.from) + '</b>' + escH(c.text) + '</div>';
+    }).join('');
+  } else if (t && (rx[t.k] || []).length) {
+    html = t.icon + ' ' + t.label + '：' + rx[t.k].map(function(n){ return escH(hkDn(n)); }).join('、');
+  }
+  if (html) { panel.innerHTML = html; panel.style.display = 'block'; }
+  else { hkMineOpen = null; panel.style.display = 'none'; }
+}
+function toggleMyReaction(k) {
+  hkMineOpen = (hkMineOpen === k) ? null : k;
+  if (hkMineOpen) {
+    const me = hkMe();
+    const mine = hkItems.find(function(x) { return me && x.name === me; });
+    if (mine && mine.id && k === 'cm') hkSeenMark(mine.id, 'cm', hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0));
+    else if (mine && mine.id && mine.lastRx) hkSeenMark(mine.id, k, mine.lastRx[k] || 0); // 見たので新着を消す
+  }
+  drawMyReactions();
+}
+
+function toggleHitokotoMore() { hkOpenAll = !hkOpenAll; drawHitokoto(); }
+
+function hkToggleNames(i, k) {
+  hkOpenPicker = null;
+  hkOpenNames = (hkOpenNames && hkOpenNames.i === i && hkOpenNames.k === k) ? null : { i: i, k: k };
+  drawHitokoto();
+}
+
+function hkTogglePicker(i) {
+  hkOpenNames = null;
+  hkOpenPicker = (hkOpenPicker === i) ? null : i;
+  hkCommentFor = null;
+  drawHitokoto();
+}
+
+// ===== コメント（書かれた本人にだけ表示） =====
+const HK_CM_MAX = 30;
+let hkCommentFor = null; // コメント入力欄を開いている行
+let hkMyComments = [];   // 自分の一言に届いたコメント
+let hkMyCommentsId = ''; // 上のコメントがどの一言（対象ID）の分か
+
+function hkOpenComment(i) {
+  if (!hkMe()) { showToast('⚠ 先に名前を入力してください'); editDiaryName(); return; }
+  hkCommentFor = (hkCommentFor === i) ? null : i;
+  drawHitokoto();
+  const el = document.getElementById('hk-cm-input');
+  if (el) el.focus();
+}
+function hkCmCount(el) {
+  const c = document.getElementById('hk-cm-count');
+  if (c) c.textContent = el.value.length + ' / ' + HK_CM_MAX;
+}
+function hkSendComment(i) {
+  const it = hkItems[i];
+  const el = document.getElementById('hk-cm-input');
+  const me = hkMe();
+  if (!it || !it.id || !el) return;
+  const text = el.value.replace(/[\r\n]+/g, ' ').trim();
+  if (!text) { showToast('⚠ コメントを入力してください'); el.focus(); return; }
+  if (text.length > HK_CM_MAX) { showToast('⚠ ' + HK_CM_MAX + '字以内にしてください'); return; }
+  if (!me || me === it.name) return;
+  fetch(GAS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ _token: WRITE_TOKEN, action: 'addComment', targetId: it.id, text: text, commenter: me, teacherKey: hkTeacherKey() })
+  })
+  .then(function() { showToast('✓ ' + hkDn(it.name) + 'さんにだけ届けました'); })
+  .catch(function() { showToast('⚠ 通信に失敗しました。もう一度送ってください'); });
+  hkCommentFor = null; hkOpenPicker = null;
+  drawHitokoto();
+}
+// 自分の今の一言に届いたコメントを取得（他の人の分は取得しない）
+function hkLoadMyComments() {
+  const me = hkMe();
+  const mine = hkItems.find(function(x) { return me && x.name === me; });
+  if (!mine || !mine.id || me === '先生') { hkMyComments = []; hkMyCommentsId = ''; drawMyReactions(); return; }
+  const reqId = mine.id;
+  fetch(GAS_URL + '?' + new URLSearchParams({ action: 'getMyComments', name: me, id: mine.id }).toString())
+  .then(function(r) { return r.json(); })
+  .then(function(j) {
+    const now = hkItems.find(function(x) { return x.name === hkMe(); });
+    if (!now || now.id !== reqId) return; // 取得中に名前が変わった場合は捨てる
+    hkMyComments = (j.status === 'ok' && Array.isArray(j.comments)) ? j.comments : [];
+    hkMyCommentsId = reqId;
+    drawMyReactions();
+  })
+  .catch(function() {});
+}
+
+// リアクションの付与／取り消し：画面は先に反映し、送信は裏で行う
+function hkReact(i, k) {
+  const it = hkItems[i];
+  if (!it || !it.id) return;
+  const me = hkMe();
+  if (!me) {
+    showToast('⚠ 先に名前を入力してください');
+    editDiaryName();
+    highlightMissing(document.getElementById('diary-name'));
+    return;
+  }
+  if (me === it.name) return;
+  it.reactions = it.reactions || {};
+  const arr = it.reactions[k] = it.reactions[k] || [];
+  const j = arr.indexOf(me);
+  if (j >= 0) arr.splice(j, 1);
+  else if (me === '先生') arr.unshift(me);
+  else arr.push(me);
+  hkOpenPicker = null;
+  hkOpenNames = arr.length ? { i: i, k: k } : null;
+  drawHitokoto();
+  fetch(GAS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ _token: WRITE_TOKEN, action: 'toggleReaction', targetId: it.id, type: k, reactor: me, teacherKey: hkTeacherKey() })
+  }).catch(function() { showToast('⚠ 通信に失敗しました。もう一度押してください'); });
+}
+
+// 日記提出直後：自分の一言を先頭に置き換え、少し待って正式なデータを取り直す
+function hkAfterSubmit(name, text) {
+  const n = String(name || '').replace(/[\u3000\s]+/g, '');
+  const t = String(text || '').trim();
+  if (n && t) {
+    const now = new Date();
+    const label = (now.getMonth() + 1) + '/' + now.getDate() + '(' + ['日','月','火','水','木','金','土'][now.getDay()] + ')';
+    hkItems = hkItems.filter(function(x) { return x.name !== n; });
+    hkItems.unshift({ id: '', name: n, text: t, date: label, reactions: {} });
+    hkOpenNames = null; hkOpenPicker = null;
+    drawHitokoto();
+  }
+  setTimeout(loadNews, 1500);
+}
+
 /* ===LEADERS_JS_INSERT=== */
 </script>
 </body>
