@@ -245,20 +245,16 @@
   .diary-name-inline { display: flex; gap: 8px; }
   .diary-name-inline .diary-name-input { flex: 1; min-width: 0; }
   .diary-name-ok { flex-shrink: 0; padding: 0 16px; border: none; border-radius: var(--radius-sm); background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
-  .diary-who { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 10px; padding: 6px 12px; background: var(--bg-warm); border-radius: var(--radius-sm); }
+  .diary-who { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 18px; padding: 6px 12px; background: var(--bg-warm); border-radius: var(--radius-sm); }
   .diary-who-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; }
   .diary-who-name { font-size: 14px; font-weight: 700; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .diary-who-names { margin: -4px 0 10px; }
+  @keyframes hkAlertIn { from { opacity: 0; transform: translateY(-6px) scale(.97); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .my-card.is-new { animation: none; } }
   .hk-cm-form { display: flex; gap: 6px; margin-top: 7px; }
   .hk-cm-form input { flex: 1; min-width: 0; padding: 8px 10px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; font-family: inherit; color: var(--ink); }
   .hk-cm-form input:focus { border-color: var(--primary); outline: none; }
   .hk-cm-send { flex-shrink: 0; min-height: 40px !important; padding: 0 14px; border: none; border-radius: var(--radius-sm); background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
   .hk-cm-count { font-size: 10px; color: var(--ink-muted); text-align: right; margin-top: 3px; }
-  .hk-cm-line b { color: var(--primary); margin-right: 6px; }
-  .diary-who-mine { flex: 1 1 100%; font-size: 11px; color: var(--ink-soft); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -2px; cursor: pointer; }
-  .diary-who-mine.open { white-space: normal; }
-  .diary-who-mine b { color: var(--ink-muted); font-weight: 700; margin-right: 6px; }
-  .hk-new-dot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: #e0393e; border: 2px solid var(--bg-warm); }
   .diary-who-edit { flex-shrink: 0; min-height: 32px !important; padding: 0 12px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   .diary-name-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); letter-spacing: .06em; margin-bottom: 6px; display: block; }
   .diary-name-input { width: 100%; padding: 11px 14px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; color: var(--ink); }
@@ -353,7 +349,8 @@
     .lead-role { width: 90px; font-size: 11px; }
   }
   /* ===== みんなの一言 ===== */
-  .hk-wrap { border: 1.5px solid rgba(26,58,107,0.22); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 18px; background: var(--surface); }
+  .hk-wrap { border: 1.5px solid rgba(26,58,107,0.18); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); }
+  .hk-divider { height: 1px; background: var(--border); margin: 26px 0 18px; }
   .hk-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; background: rgba(26,58,107,0.06); }
   .hk-head-title { font-size: 13px; font-weight: 700; color: var(--primary); letter-spacing: .04em; }
   .hk-head-sub { margin-left: auto; font-size: 10px; color: var(--ink-muted); }
@@ -371,6 +368,8 @@
   .hk-chip { min-height: 26px !important; height: 26px; padding: 0 8px; border: 1.5px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; position: relative; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .hk-chip::after { content: ''; position: absolute; top: -7px; bottom: -7px; left: 0; right: 0; }
   .hk-chip.on { border-color: var(--primary); background: rgba(26,58,107,0.08); color: var(--primary); }
+  .hk-chip.hk-count { border: none; background: transparent; padding: 0 5px; gap: 3px; color: var(--ink-soft); }
+  .hk-chip.hk-count.on { background: transparent; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
   .hk-chip.hk-add { width: 30px; padding: 0; justify-content: center; color: var(--ink-muted); font-size: 14px; }
   .hk-names { font-size: 11px; color: var(--ink-soft); background: var(--bg-warm); border-radius: 6px; padding: 6px 10px; margin-top: 7px; line-height: 1.6; }
   .hk-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
@@ -385,6 +384,21 @@
   .header-title { font-size: 20px !important; margin-bottom: 2px; }
   .header-subtitle { margin-bottom: 0; }
   .tab-bar { margin-bottom: 12px; top: 8px; }
+
+  .my-card { margin: -18px 0 18px; padding: 10px 14px 12px; border: 1.5px solid var(--border-soft); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--surface); }
+  .my-card.is-new { border-color: var(--gold); background: var(--gold-pale); animation: hkAlertIn .45s cubic-bezier(.22,1.4,.36,1) both; }
+  .my-head { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--ink-muted); }
+  .my-link { margin-left: auto; min-height: 28px !important; padding: 0 2px; border: none; background: transparent; font-family: inherit; font-size: 11px; font-weight: 700; color: var(--primary); cursor: pointer; position: relative; }
+  .my-link::after { content: ''; position: absolute; top: -8px; bottom: -8px; left: -8px; right: -8px; }
+  .my-link.is-new { color: #8a6200; }
+  .my-cheer { display: inline-block; font-size: 13px; animation: myCheer 1s ease .3s 2; }
+  @keyframes myCheer { 0%,100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-15deg) scale(1.2); } 60% { transform: rotate(10deg) scale(1.1); } }
+  @media (prefers-reduced-motion: reduce) { .my-cheer { animation: none; } }
+  .my-text { font-size: 13px; color: var(--ink); line-height: 1.6; margin-top: 2px; word-break: break-word; }
+  .my-rx { margin: 8px -6px 0; padding: 7px 10px; border-radius: var(--radius-sm); background: rgba(26,58,107,0.06); font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
+  .my-lbl { color: var(--ink-muted); }
+  .my-new { color: var(--ink); }
+  .diary-who { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
 
 /* ===LEADERS_CSS_INSERT=== */
 </style>
@@ -436,28 +450,16 @@
       <div class="diary-who" id="diary-who" style="display:none;">
         <span class="diary-who-label">記入者</span>
         <span class="diary-who-name" id="diary-who-name"></span>
-        <span class="hk-rx" id="diary-who-rx"></span>
         <button type="button" class="diary-who-edit" onclick="editDiaryName()">変更</button>
-        <div class="diary-who-mine" id="diary-who-mine" style="display:none;" onclick="this.classList.toggle('open')"></div>
       </div>
-      <div class="hk-names diary-who-names" id="diary-who-names" style="display:none;"></div>
+      <!-- あなたの一言カード（自分の一言と届いた反応） -->
+      <div class="my-card" id="diary-who-names" style="display:none;"></div>
       <div class="diary-name-row" id="diary-name-row">
         <label class="diary-name-label" for="diary-name">名前<span style="color:var(--red);margin-left:2px;">*</span></label>
         <div class="diary-name-inline">
           <input type="text" id="diary-name" class="diary-name-input" placeholder="名前を入力" oninput="onDiaryNameInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmDiaryName();}">
           <button type="button" class="diary-name-ok" onclick="confirmDiaryName()">決定</button>
         </div>
-      </div>
-
-      <!-- みんなの一言 -->
-      <div class="hk-wrap">
-        <div class="hk-head">
-          <span style="font-size:14px;">💬</span>
-          <span class="hk-head-title">みんなの一言</span>
-          <span class="hk-head-sub">各自の最新・新しい順（自分以外）</span>
-        </div>
-        <div class="hk-list" id="hk-list"><div class="hk-empty">読み込み中…</div></div>
-        <button class="hk-more" id="hk-more" style="display:none;" onclick="toggleHitokotoMore()"></button>
       </div>
 
       <!-- Q1 -->
@@ -538,11 +540,23 @@
       <!-- 自由記述 -->
       <div class="diary-q">
         <div class="diary-q-label">＋ 今日、残しておきたいことがあれば一言</div>
-        <div class="diary-q-hint">書いた一言は、名前付きで上の「みんなの一言」に表示されます</div>
+        <div class="diary-q-hint">書いた一言は、名前付きで部員全員に公開されます（下の「みんなの一言」に表示）</div>
         <textarea id="diary-free" class="diary-free" placeholder="自由に記入（みんなに公開されます）"></textarea>
       </div>
 
       <button class="diary-submit-btn" id="diary-submit-btn" onclick="submitDiary()">✦ 提出する</button>
+
+      <!-- みんなの一言（提出ボタンの下。先に読むと自分の振り返りが引っ張られるため） -->
+        <div class="hk-divider" aria-hidden="true"></div>
+      <div class="hk-wrap">
+        <div class="hk-head">
+          <span style="font-size:14px;">💬</span>
+          <span class="hk-head-title">みんなの一言</span>
+          <span class="hk-head-sub">各自の最新・新しい順（自分以外）</span>
+        </div>
+        <div class="hk-list" id="hk-list"><div class="hk-empty">読み込み中…</div></div>
+        <button class="hk-more" id="hk-more" style="display:none;" onclick="toggleHitokotoMore()"></button>
+      </div>
     </div>
 
     <!-- リーダー配置表 -->
@@ -1642,7 +1656,7 @@ function confirmDiaryName() {
   if (!el || !el.value.trim()) { showToast('⚠ 名前を入力してください'); if (el) el.focus(); return; }
   onDiaryNameInput(el);
   _diaryNameEditing = false;
-  hkMineOpen = null;
+  if (typeof hkMyOpen !== 'undefined') { hkMyOpen = false; hkJustSeen = null; }
   refreshDiaryWho();
   if (typeof hkLoadMyComments === 'function') hkLoadMyComments();
 }
@@ -2006,7 +2020,6 @@ const HK_TYPES = [
 const HK_SHOW    = 3;                  // 初期表示の人数（4件目以降は「もっと見る」）
 const LS_TEACHER = 'marc_teacher_key'; // 先生モードのキー（先生の端末にだけ保存）
 let hkItems = [], hkOpenAll = false, hkOpenNames = null, hkOpenPicker = null;
-let hkMineOpen = null;   // 記入者欄で開いているリアクション種類
 let hkDisplayNames = {}; // 部員名簿シートの「氏名→表示名」（GASから受け取る）
 function hkDn(n) { return hkDisplayNames[n] || n; } // 名簿に無ければフルネーム
 
@@ -2089,7 +2102,7 @@ function drawHitokoto() {
     const rx = it.reactions || {};
     let chips = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
       const on = !!me && rx[t.k].indexOf(me) >= 0;
-      return '<button class="hk-chip' + (on ? ' on' : '') + '" onclick="hkToggleNames(' + i + ',\'' + t.k + '\')">' + t.icon + ' ' + rx[t.k].length + '</button>';
+      return '<button class="hk-chip hk-count' + (on ? ' on' : '') + '" onclick="hkToggleNames(' + i + ',\'' + t.k + '\')">' + t.icon + ' ' + rx[t.k].length + '</button>';
     }).join('');
     if (!mine && it.id) chips += '<button class="hk-chip hk-add" aria-label="リアクションする" onclick="hkTogglePicker(' + i + ')">＋</button>';
     let extra = '';
@@ -2129,8 +2142,7 @@ function drawHitokoto() {
   drawMyReactions();
 }
 
-// 記入者欄：自分の一言へのリアクション（種類ごと）と、自分の一言（2行目に常時・小さく）を表示。
-// 前回見た後に付いたリアクションには赤い点（新着）を付け、開いたら消す。
+// 既読管理：自分の今の一言について、どの時点までの反応を見たかを端末に保存する
 const LS_HK_SEEN = 'marc_hk_seen'; // {id, t:{nice:ms,...}} 自分の一言のどの時点まで見たか
 function hkSeenGet(id) {
   try { const o = JSON.parse(LS.get(LS_HK_SEEN) || '{}'); return (o.id === id && o.t) ? o.t : {}; } catch(e) { return {}; }
@@ -2139,57 +2151,93 @@ function hkSeenMark(id, k, ms) {
   const t = hkSeenGet(id); t[k] = ms;
   LS.set(LS_HK_SEEN, JSON.stringify({ id: id, t: t }));
 }
+// 「あなたの一言」カード：自分の一言を常時表示。届いた反応は見出し右の「〇人から届きました ›」を押すと開く。
+// 前回見た後に届いたものがあるときはカードを金色にし、開いたら既読にする（開いた時の新着の名前は太字）。
+let hkMyOpen = false;       // 反応の一覧を開いているか
+let hkJustSeen = null;      // 開いた時点で新着だった人（このページ表示中は太字のまま）
+function hkMyAllPeople(mine) {
+  const who = [];
+  HK_TYPES.forEach(function(t) { ((mine.reactions || {})[t.k] || []).forEach(function(n) { if (who.indexOf(n) < 0) who.push(n); }); });
+  hkMyComments.forEach(function(c) { if (who.indexOf(c.from) < 0) who.push(c.from); });
+  return who;
+}
 function drawMyReactions() {
-  const box = document.getElementById('diary-who-rx');
-  const panel = document.getElementById('diary-who-names');
-  if (!box || !panel) return;
+  const card = document.getElementById('diary-who-names');
+  if (!card) return;
   const me = hkMe();
   const mine = hkItems.find(function(x) { return me && x.name === me; });
-  const mineLine = document.getElementById('diary-who-mine');
-  if (!mine) { box.innerHTML = ''; panel.style.display = 'none'; hkMineOpen = null; if (mineLine) mineLine.style.display = 'none'; return; }
-  // 自分の一言：記入者欄の2行目に小さく常時表示（1行で省略、タップで全文）
-  if (mineLine) {
-    mineLine.innerHTML = '<b>あなたの一言 ' + escH(mine.date) + '</b>' + escH(mine.text);
-    mineLine.style.display = 'block';
-  }
+  if (!mine) { card.style.display = 'none'; hkMyOpen = false; return; }
+  if (hkMyCommentsId !== mine.id) hkMyComments = [];
   const rx = mine.reactions || {};
-  const last = mine.lastRx || {};
-  const seen = hkSeenGet(mine.id);
-  const types = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; });
-  if (hkMyCommentsId !== mine.id) hkMyComments = []; // 別人・古い一言のコメントは出さない
-  box.innerHTML = types.map(function(t) {
-    const isNew = (last[t.k] || 0) > (seen[t.k] || 0);
-    return '<button class="hk-chip' + (hkMineOpen === t.k ? ' on' : '') + '" onclick="toggleMyReaction(\'' + t.k + '\')" aria-label="自分の一言への' + t.label + (isNew ? '（新着あり）' : '') + '">'
-      + t.icon + ' ' + rx[t.k].length + (isNew ? '<span class="hk-new-dot" aria-hidden="true"></span>' : '') + '</button>';
-  }).join('') + (hkMyComments.length ? (function() {
-    const lastCm = hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0);
-    const isNew = lastCm > (seen.cm || 0);
-    return '<button class="hk-chip' + (hkMineOpen === 'cm' ? ' on' : '') + '" onclick="toggleMyReaction(\'cm\')" aria-label="自分へのコメント' + (isNew ? '（新着あり）' : '') + '">💬 ' + hkMyComments.length
-      + (isNew ? '<span class="hk-new-dot" aria-hidden="true"></span>' : '') + '</button>';
-  })() : '');
-  let html = '';
-  const t = HK_TYPES.find(function(x) { return x.k === hkMineOpen; });
-  if (hkMineOpen === 'cm' && hkMyComments.length) {
-    html = hkMyComments.map(function(c) {
-      return '<div class="hk-cm-line"><b>' + escH(c.from) + '</b>' + escH(c.text) + '</div>';
+  const all = hkMyAllPeople(mine);
+  // 新着はコメントを読み込み終えてから判定する（途中で判定すると数がずれるため）
+  const ready = hkMyCommentsId === mine.id;
+  const nw = (ready && mine.id) ? hkNewSince(mine) : { who: [], types: [], cm: 0 };
+  const hasNew = nw.who.length > 0;
+  let link = '';
+  // コメントの読み込みが終わるまでは人数を出さない（途中の人数や色が一瞬出て切り替わるのを防ぐ）
+  if (!ready) {
+    card.className = 'my-card';
+    card.innerHTML = '<div class="my-head"><span>' + escH(mine.date) + '　あなたの一言</span></div><div class="my-text">' + escH(mine.text) + '</div>';
+    card.style.display = 'block';
+    return;
+  }
+  // 開いて既読にした後も、このページを見ている間は「届きました 🎉」のまま（押した直後に表示が変わらないように）
+  const justN = (hkJustSeen || []).filter(function(x) { return all.indexOf(x) >= 0; }).length;
+  const newN = hasNew ? Math.max(nw.who.length, justN) : justN;
+  if (newN) link = '<button type="button" class="my-link is-new" onclick="hkToggleMy()">' + newN + '人から届きました <span class="my-cheer" aria-hidden="true">🎉</span> ' + (hkMyOpen ? '▲' : '›') + '</button>';
+  else if (all.length) link = '<button type="button" class="my-link" onclick="hkToggleMy()">' + all.length + '人から届いています ' + (hkMyOpen ? '▲' : '›') + '</button>';
+  const bold = hkJustSeen || [];
+  const nm = function(n) { const d = escH(hkDn(n)); return bold.indexOf(n) >= 0 ? '<b class="my-new">' + d + '</b>' : d; };
+  let lines = '';
+  if (hkMyOpen && all.length) {
+    lines = HK_TYPES.filter(function(t) { return (rx[t.k] || []).length; }).map(function(t) {
+      return '<div class="my-line">' + t.icon + ' ' + rx[t.k].map(nm).join('、') + '<span class="my-lbl">が' + t.label + '</span></div>';
+    }).join('') + hkMyComments.map(function(c) {
+      return '<div class="my-line">💬 ' + nm(c.from) + '「' + escH(c.text) + '」</div>';
     }).join('');
-  } else if (t && (rx[t.k] || []).length) {
-    html = t.icon + ' ' + t.label + '：' + rx[t.k].map(function(n){ return escH(hkDn(n)); }).join('、');
   }
-  if (html) { panel.innerHTML = html; panel.style.display = 'block'; }
-  else { hkMineOpen = null; panel.style.display = 'none'; }
+  card.className = 'my-card' + (hasNew ? ' is-new' : '');
+  card.innerHTML = '<div class="my-head"><span>' + escH(mine.date) + '　あなたの一言</span>' + link + '</div>'
+    + '<div class="my-text">' + escH(mine.text) + '</div>'
+    + (lines ? '<div class="my-rx">' + lines + '</div>' : '');
+  card.style.display = 'block';
 }
-function toggleMyReaction(k) {
-  hkMineOpen = (hkMineOpen === k) ? null : k;
-  if (hkMineOpen) {
-    const me = hkMe();
-    const mine = hkItems.find(function(x) { return me && x.name === me; });
-    if (mine && mine.id && k === 'cm') hkSeenMark(mine.id, 'cm', hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0));
-    else if (mine && mine.id && mine.lastRx) hkSeenMark(mine.id, k, mine.lastRx[k] || 0); // 見たので新着を消す
-  }
+// 開いている状態で見えている新着を既読にする（コメントの読み込みが後から終わった場合も呼ばれる）
+function hkMarkMySeen(mine) {
+  if (!mine || !mine.id) return;
+  if (hkMyCommentsId !== mine.id) hkMyComments = [];
+  const n = hkNewSince(mine);
+  hkJustSeen = (hkJustSeen || []).concat(n.who.filter(function(x) { return (hkJustSeen || []).indexOf(x) < 0; }));
+  HK_TYPES.forEach(function(t) { hkSeenMark(mine.id, t.k, (mine.lastRx || {})[t.k] || 0); });
+  if (hkMyCommentsId === mine.id) hkSeenMark(mine.id, 'cm', hkMyComments.reduce(function(m, c) { return Math.max(m, c.ms || 0); }, 0));
+}
+// 「〇人から届きました」を押す：一覧を開閉。開いたときに新着を既読にする
+function hkToggleMy() {
+  const me = hkMe();
+  const mine = hkItems.find(function(x) { return me && x.name === me; });
+  if (!mine) return;
+  hkMyOpen = !hkMyOpen;
+  if (hkMyOpen) hkMarkMySeen(mine);
   drawMyReactions();
 }
-
+// 前回見た後に届いたリアクション・コメントの送り主を返す
+function hkNewSince(mine) {
+  const seen = hkSeenGet(mine.id);
+  const at = mine.rxAt || {};
+  const who = [], types = [];
+  HK_TYPES.forEach(function(t) {
+    const m = at[t.k] || {};
+    let hit = false;
+    Object.keys(m).forEach(function(n) {
+      if ((m[n] || 0) > (seen[t.k] || 0) && ((mine.reactions || {})[t.k] || []).indexOf(n) >= 0) { hit = true; if (who.indexOf(n) < 0) who.push(n); }
+    });
+    if (hit) types.push(t);
+  });
+  const newCm = hkMyComments.filter(function(c) { return (c.ms || 0) > (seen.cm || 0); });
+  newCm.forEach(function(c) { if (who.indexOf(c.from) < 0) who.push(c.from); });
+  return { who: who, types: types, cm: newCm.length };
+}
 function toggleHitokotoMore() { hkOpenAll = !hkOpenAll; drawHitokoto(); }
 
 function hkToggleNames(i, k) {
@@ -2254,9 +2302,15 @@ function hkLoadMyComments() {
     if (!now || now.id !== reqId) return; // 取得中に名前が変わった場合は捨てる
     hkMyComments = (j.status === 'ok' && Array.isArray(j.comments)) ? j.comments : [];
     hkMyCommentsId = reqId;
+    if (hkMyOpen) hkMarkMySeen(now); // 開いたまま届いたコメントも既読に
     drawMyReactions();
   })
-  .catch(function() {});
+  .catch(function() {
+    // 取得できなくても、リアクションの表示は出す
+    const now = hkItems.find(function(x) { return x.name === hkMe(); });
+    if (!now || now.id !== reqId) return;
+    hkMyComments = []; hkMyCommentsId = reqId; drawMyReactions();
+  });
 }
 
 // リアクションの付与／取り消し：画面は先に反映し、送信は裏で行う
@@ -2300,6 +2354,11 @@ function hkAfterSubmit(name, text) {
     drawHitokoto();
   }
   setTimeout(loadNews, 1500);
+  // 提出後はみんなの一言へ（書き終えたら仲間の一言を読む流れ）
+  setTimeout(function() {
+    const hk = document.querySelector('.hk-divider');
+    if (hk && hk.scrollIntoView) hk.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
 }
 
 /* ===LEADERS_JS_INSERT=== */
