@@ -249,7 +249,7 @@
   .diary-who-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; }
   .diary-who-name { font-size: 14px; font-weight: 700; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @keyframes hkAlertIn { from { opacity: 0; transform: translateY(-6px) scale(.97); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { .my-notice.is-new { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .my-notice.is-new { animation: none; } .my-notice.shine::after { display: none; } }
   .hk-cm-form { display: flex; gap: 6px; margin-top: 7px; }
   .hk-cm-form input { flex: 1; min-width: 0; padding: 8px 10px !important; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 16px !important; font-family: inherit; color: var(--ink); }
   .hk-cm-form input:focus { border-color: var(--primary); outline: none; }
@@ -349,9 +349,9 @@
     .lead-role { width: 90px; font-size: 11px; }
   }
   /* ===== 日記を書く／仲間の一言 の切り替え ===== */
-  .diary-seg { scroll-margin-top: 170px; display: flex; gap: 4px; padding: 4px; margin: 0 0 16px; background: var(--bg-warm); border-radius: 999px; }
-  .diary-seg button { flex: 1; min-height: 40px !important; border: none; border-radius: 999px; background: transparent; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .diary-seg button.on { background: var(--surface); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+  .diary-seg { scroll-margin-top: 170px; display: flex; gap: 4px; padding: 4px; margin: 0 0 16px; background: var(--bg-warm); border: 1px solid var(--border-soft); border-radius: 999px; }
+  .diary-seg button { flex: 1; min-height: 44px !important; border: none; border-radius: 999px; background: transparent; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .diary-seg button.on { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(26,58,107,0.25); }
   .seg-badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #e0393e; color: #fff; font-size: 11px; line-height: 18px; }
   .diary-pane { display: none; }
   /* 「仲間の一言」表示中は、自己管理タブ内の剣道日記より下（リーダー配置表・カレンダー等）を隠す */
@@ -407,6 +407,10 @@
   .my-notice.is-new + .my-notice-body { border-color: var(--gold); }
   .my-notice { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 40px !important; margin: 0; padding: 8px 12px; border: 1.5px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--surface); color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer; }
   .my-notice.is-new { border-color: var(--gold); background: var(--gold-pale); color: #8a6200; animation: hkAlertIn .45s cubic-bezier(.22,1.4,.36,1) both; }
+  /* 新着の光：開いて最初に表示したときだけ、光の帯が2回横切って止まる（CSSのみ・枠の外にははみ出さない） */
+  .my-notice { position: relative; overflow: hidden; }
+  .my-notice.shine::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; pointer-events: none; background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 100%); transform: translateX(-120%); animation: myShine .9s ease-in-out .5s 2 both; }
+  @keyframes myShine { from { transform: translateX(-120%); } to { transform: translateX(260%); } }
   .my-notice .go { margin-left: auto; padding-left: 6px; white-space: nowrap; flex-shrink: 0; }
   .my-cheer { display: inline-block; font-size: 13px; animation: myCheer 1s ease .3s 2; }
   @keyframes myCheer { 0%,100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-15deg) scale(1.2); } 60% { transform: rotate(10deg) scale(1.1); } }
@@ -2193,6 +2197,7 @@ function hkCmKey(c) { return String(c.from) + '|' + String(c.text) + '|' + Strin
 // 「あなたの一言」カード：自分の一言を常時表示。届いた反応は見出し右の「〇人から届きました ›」を押すと開く。
 // 前回見た後に届いたものがあるときはカードを金色にし、開いたら既読にする（開いた時の新着の名前は太字）。
 let hkNoticeOpen = false;   // 上部のお知らせを開いているか
+let hkShineId = '';         // 光らせた一言のID（ページを開いて最初の1回だけ光らせる）
 let hkJustSeen = null;      // 開いた時点で新着だった人（このページ表示中は太字のまま）
 function hkMyAllPeople(mine) {
   const who = [];
@@ -2223,11 +2228,19 @@ function drawMyReactions() {
   // 開いて既読にした後も、このページを見ている間は「届きました 🎉」のまま（押した直後に表示が変わらないように）
   const justN = (hkJustSeen || []).filter(function(x) { return all.indexOf(x) >= 0; }).length;
   const newN = Math.max(nw.who.length, justN);
-  const go = '<span class="go">' + (hkNoticeOpen ? '閉じる ▲' : (newN ? '見る ›' : '›')) + '</span>';
-  notice.className = 'my-notice' + (newN ? ' is-new' : '') + (hkNoticeOpen ? ' open' : '');
-  notice.innerHTML = newN
+  const goText = hkNoticeOpen ? '閉じる ▲' : (newN ? '見る ›' : '›');
+  const go = '<span class="go"></span>';
+  // 光は、ページを開いて未読の新着を最初に表示したときだけ（再描画で光り直さない）
+  if (nw.who.length && !hkShineId) hkShineId = mine.id;
+  const shine = newN && hkShineId === mine.id;
+  notice.className = 'my-notice' + (newN ? ' is-new' : '') + (shine ? ' shine' : '') + (hkNoticeOpen ? ' open' : '');
+  const nhtml = newN
     ? '<span class="my-cheer" aria-hidden="true">🎉</span>' + escH(mine.date) + 'の一言に' + newN + '人から届きました' + go
     : escH(mine.date) + 'の一言に' + all.length + '人から届いています' + go;
+  // 内容が変わったときだけ書き換える（毎回書き換えると🎉の動きが再描画のたびにやり直しになるため）
+  if (notice._html !== nhtml) { notice.innerHTML = nhtml; notice._html = nhtml; }
+  const goEl = notice.querySelector('.go');
+  if (goEl && goEl.textContent !== goText) goEl.textContent = goText;
   if (hkNoticeOpen) {
     const bold = hkJustSeen || [];
     const nm = function(n) { const d = escH(hkDn(n)); return bold.indexOf(n) >= 0 ? '<b class="my-new">' + d + '</b>' : d; };
