@@ -237,10 +237,9 @@
   .ai-link-arrow { font-size: 20px; color: rgba(255,255,255,0.75); flex-shrink: 0; }
   /* ===== 剣道日記（成長日誌） ===== */
   .diary-wrap { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); padding: 18px 20px; margin-bottom: 14px; }
-  .diary-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .diary-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
   .diary-title { font-size: 15px; font-weight: 700; color: var(--primary); letter-spacing: .04em; }
   .diary-date { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--ink-muted); background: var(--bg-warm); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
-  .diary-sub { margin-top: 6px;  font-size: 11px; color: var(--ink-muted); margin-bottom: 16px; }
   .diary-name-row { margin-bottom: 18px; }
   .diary-name-inline { display: flex; gap: 8px; }
   .diary-name-inline .diary-name-input { flex: 1; min-width: 0; }
@@ -353,6 +352,9 @@
   .diary-seg button { flex: 1; min-height: 44px !important; border: none; border-radius: 999px; background: transparent; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .diary-seg button.on { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(26,58,107,0.25); }
   .seg-badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #e0393e; color: #fff; font-size: 11px; line-height: 18px; }
+  .diary-seg button { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 1px; line-height: 1.2; white-space: nowrap; }
+  .seg-main { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .seg-names { max-width: 100%; padding: 0 6px; font-size: 10px; font-weight: 600; color: var(--primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .diary-pane { display: none; }
   /* 「仲間の一言」表示中は、自己管理タブ内の剣道日記より下（リーダー配置表・カレンダー等）を隠す */
   #tab-news.peers-mode > .diary-wrap ~ * { display: none !important; }
@@ -386,7 +388,6 @@
   .hk-chip.hk-add { width: 30px; padding: 0; justify-content: center; color: var(--ink-muted); font-size: 14px; }
   .hk-names { font-size: 11px; color: var(--ink-soft); background: var(--bg-warm); border-radius: 6px; padding: 6px 10px; margin-top: 7px; line-height: 1.6; }
   .hk-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
-  .hk-more { width: 100%; min-height: 40px !important; border: none; border-top: 1px solid var(--border-soft); background: transparent; color: var(--ink-muted); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   .hk-empty { font-size: 12px; color: var(--ink-muted); padding: 12px 0; text-align: center; }
 
   /* ===== ヘッダーを低く（Q1を最初の画面に入れるため）===== */
@@ -398,7 +399,7 @@
   .header-subtitle { margin-bottom: 0; }
   .tab-bar { margin-bottom: 12px; top: 8px; }
 
-  .my-notice-wrap { margin: 0 0 12px; }
+  .my-notice-wrap { margin: 0 0 16px; }
   .my-notice-body { padding: 8px 12px 10px; border: 1.5px solid var(--border-soft); border-top: none; border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: var(--surface); }
   .my-notice-label { font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; }
   .my-notice-body .my-text { margin: 2px 0 8px; }
@@ -476,7 +477,7 @@
       <!-- 切り替え：日記を書く／仲間の一言（開いたときは常に「日記を書く」） -->
       <div class="diary-seg" role="tablist">
         <button type="button" class="on" id="seg-write" role="tab" aria-selected="true" onclick="hkSwitchPane('write')">✍ 日記を書く</button>
-        <button type="button" id="seg-peers" role="tab" aria-selected="false" onclick="hkSwitchPane('peers')">💬 仲間の一言<span class="seg-badge" id="seg-badge" style="display:none;"></span></button>
+        <button type="button" id="seg-peers" role="tab" aria-selected="false" onclick="hkSwitchPane('peers')"><span class="seg-main">💬 仲間の一言<span class="seg-badge" id="seg-badge" style="display:none;"></span></span><span class="seg-names" id="seg-names" style="display:none;"></span></button>
       </div>
 
       <!-- ===== 日記を書く ===== -->
@@ -492,8 +493,6 @@
         <button type="button" class="my-notice" id="my-notice" onclick="hkToggleNotice()"></button>
         <div class="my-notice-body" id="my-notice-body" style="display:none;"></div>
       </div>
-
-      <div class="diary-sub">今日の稽古をふりかえって記録しよう</div>
 
       <!-- Q1 -->
       <div class="diary-q">
@@ -596,7 +595,6 @@
         </div>
         <div class="hk-nudge" id="hk-nudge" style="display:none;">仲間の一言にも、<span>いいねやコメントを送ってみよう</span></div>
         <div class="hk-list" id="hk-list"><div class="hk-empty">読み込み中…</div></div>
-        <button class="hk-more" id="hk-more" style="display:none;" onclick="toggleHitokotoMore()"></button>
       </div>
       </div>
     </div>
@@ -1626,6 +1624,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLogUI();
   loadNews();
   loadDiaryName();
+  q4LoadCustom();
   setDiaryDate();
   buildLeadersTable();
   loadLeaders();
@@ -1701,6 +1700,7 @@ function confirmDiaryName() {
   if (typeof hkNoticeOpen !== 'undefined') { hkJustSeen = null; hkNoticeOpen = false; }
   refreshDiaryWho();
   if (typeof hkLoadMyComments === 'function') hkLoadMyComments();
+  if (typeof q4LoadCustom === 'function') q4LoadCustom();
 }
 
 // 起動時：キャッシュ→GASの順で名前を復元（二重）
@@ -1747,11 +1747,14 @@ function submitDiary() {
   if (_diaryNameEditing) confirmDiaryName();
 
   // Q4/Q5の選択を収集
+  // 本人の育った選択肢（過去の「その他」）は、記録上は「その他:〇〇」として送る（集計の形は今までと同じ）
   const q4 = Array.from(document.querySelectorAll('.diary-checks[data-q="q4"] .diary-check-btn.selected'))
-    .map(function(b){ return b.textContent.trim(); });
-  const q4other = (document.getElementById('diary-q4-other').value || '').trim();
+    .map(function(b){ return b.dataset.custom ? 'その他:' + b.dataset.custom : b.textContent.trim(); });
+  const q4other = q4Clean(document.getElementById('diary-q4-other').value);
   // 「その他」が選択されていて自由入力がある場合、その他→入力値に置換
-  const q4list = q4.map(function(x){ return x === 'その他' && q4other ? 'その他:' + q4other : x; });
+  const q4list = q4.map(function(x){ return x === 'その他' && q4other ? 'その他:' + q4other : x; })
+    .filter(function(x, i, a){ return a.indexOf(x) === i; });
+  const q4newCustom = (q4.indexOf('その他') >= 0 && q4other) ? q4other : '';
   const q5 = Array.from(document.querySelectorAll('.diary-checks[data-q="q5"] .diary-check-btn.selected'))
     .map(function(b){ return b.textContent.trim(); });
   const free = (document.getElementById('diary-free').value || '').trim();
@@ -1781,6 +1784,7 @@ function submitDiary() {
   .then(function(){
     // 名前キャッシュは維持。名前以外をクリアして次の入力に備える。
     hkAfterSubmit(name, free);
+    if (q4newCustom) q4AddCustom(q4newCustom); // 次回から選択肢として出す
     resetDiaryForm();
     showToast('✓ 提出しました！');
     btn.textContent = '✦ 提出する'; btn.disabled = false;
@@ -1800,6 +1804,66 @@ function resetDiaryForm() {
   if (other) { other.value = ''; other.classList.remove('show'); }
   const free = document.getElementById('diary-free');
   if (free) free.value = '';
+}
+
+// ===== Q4「その他」が本人の選択肢として育つ =====
+// 過去に本人が「その他」に書いた項目を、次回から「その他」の前に選択肢として並べる（最大8件・新しい順）。
+const Q4_CUSTOM_MAX = 8;
+const LS_Q4_CUSTOM = 'marc_q4_custom';  // {name, items:[…]} 端末の控え（表示を速くするため）
+function q4Clean(s) {
+  // 区切り文字「・」と改行は記録を壊すので置き換える
+  return String(s || '').replace(/[\r\n]+/g, ' ').replace(/・/g, '／').replace(/[:：]/g, '：').trim().slice(0, 30);
+}
+function q4BaseLabels() {
+  return Array.from(document.querySelectorAll('.diary-checks[data-q="q4"] .diary-check-btn:not([data-custom])'))
+    .map(function(b) { return b.textContent.trim(); });
+}
+function q4CacheGet(name) {
+  try { const o = JSON.parse(LS.get(LS_Q4_CUSTOM) || '{}'); return (o.name === name && Array.isArray(o.items)) ? o.items : []; } catch(e) { return []; }
+}
+function q4CacheSet(name, items) { LS.set(LS_Q4_CUSTOM, JSON.stringify({ name: name, items: items.slice(0, Q4_CUSTOM_MAX) })); }
+function q4RenderCustom(items) {
+  const box = document.querySelector('.diary-checks[data-q="q4"]');
+  if (!box) return;
+  const selected = Array.from(box.querySelectorAll('.diary-check-btn[data-custom].selected')).map(function(b) { return b.dataset.custom; });
+  box.querySelectorAll('.diary-check-btn[data-custom]').forEach(function(b) { b.remove(); });
+  const other = Array.from(box.querySelectorAll('.diary-check-btn')).find(function(b) { return b.textContent.trim() === 'その他'; });
+  const base = q4BaseLabels();
+  (items || []).slice(0, Q4_CUSTOM_MAX).forEach(function(label) {
+    if (!label || base.indexOf(label) >= 0) return;
+    const b = document.createElement('button');
+    b.className = 'diary-check-btn' + (selected.indexOf(label) >= 0 ? ' selected' : '');
+    b.dataset.custom = label;
+    b.textContent = label;
+    b.onclick = function() { diaryCheck(b); };
+    box.insertBefore(b, other || null);
+  });
+}
+// 名前が決まったとき：端末の控えですぐ表示し、GASの記録で上書きする（別の端末で書いた分も反映）
+function q4LoadCustom() {
+  const name = String(LS.get(LS_NAME) || '').replace(/[\u3000\s]+/g, '');
+  if (!name) { q4RenderCustom([]); return; }
+  q4RenderCustom(q4CacheGet(name));
+  fetch(GAS_URL + '?' + new URLSearchParams({ action: 'getMyQ4', name: name }).toString())
+  .then(function(r) { return r.json(); })
+  .then(function(j) {
+    if (j.status !== 'ok' || !Array.isArray(j.items)) return;
+    const now = String(LS.get(LS_NAME) || '').replace(/[\u3000\s]+/g, '');
+    if (now !== name) return; // 取得中に名前が変わった
+    // サーバーの記録を優先し、まだ反映されていない端末の控えを後ろに足す
+    const merged = j.items.slice();
+    q4CacheGet(name).forEach(function(x) { if (merged.indexOf(x) < 0) merged.push(x); });
+    q4CacheSet(name, merged);
+    q4RenderCustom(merged);
+  })
+  .catch(function() {});
+}
+function q4AddCustom(label) {
+  const name = String(LS.get(LS_NAME) || '').replace(/[\u3000\s]+/g, '');
+  if (!name || !label || q4BaseLabels().indexOf(label) >= 0) return;
+  const items = [label].concat(q4CacheGet(name).filter(function(x) { return x !== label; }));
+  q4CacheSet(name, items);
+  q4RenderCustom(items);
 }
 
 // ===== リーダー配置表 =====
@@ -2059,9 +2123,8 @@ const HK_TYPES = [
   { k: 'wakaru', icon: '🤝', label: 'わかる' },
   { k: 'sanko',  icon: '💡', label: '参考になる' }
 ];
-const HK_SHOW    = 3;                  // 初期表示の人数（4件目以降は「もっと見る」）
 const LS_TEACHER = 'marc_teacher_key'; // 先生モードのキー（先生の端末にだけ保存）
-let hkItems = [], hkOpenAll = false, hkOpenNames = null, hkOpenPicker = null;
+let hkItems = [], hkOpenNames = null, hkOpenPicker = null;
 let hkDisplayNames = {}; // 部員名簿シートの「氏名→表示名」（GASから受け取る）
 function hkDn(n) { return hkDisplayNames[n] || n; } // 名簿に無ければフルネーム
 
@@ -2125,7 +2188,6 @@ function renderHitokoto(items) {
 
 function drawHitokoto() {
   const list = document.getElementById('hk-list');
-  const more = document.getElementById('hk-more');
   if (!list) return;
   const me = hkMe();
   // 自分の一言は記入者欄に出しているので、一覧からは除く（i は hkItems 上の位置を保持）
@@ -2133,12 +2195,11 @@ function drawHitokoto() {
     .filter(function(o) { return !(me && o.it.name === me); });
   if (!others.length) {
     list.innerHTML = '<div class="hk-empty">まだ他の部員の一言はありません</div>';
-    if (more) more.style.display = 'none';
     drawMyReactions();
     hkUpdateBadge();
     return;
   }
-  const shown = hkOpenAll ? others : others.slice(0, HK_SHOW);
+  const shown = others; // 全員分をすぐ表示（「もっと見る」なし）
   list.innerHTML = shown.map(function(o) {
     const it = o.it, i = o.idx;
     const mine = !!me && it.name === me;
@@ -2174,14 +2235,6 @@ function drawHitokoto() {
       + extra
       + '</div>';
   }).join('');
-  if (more) {
-    if (others.length > HK_SHOW) {
-      more.style.display = 'block';
-      more.textContent = hkOpenAll ? '閉じる ▲' : 'もっと見る（残り' + (others.length - HK_SHOW) + '名） ▼';
-    } else {
-      more.style.display = 'none';
-    }
-  }
   drawMyReactions();
   hkUpdateBadge();
 }
@@ -2291,7 +2344,6 @@ function hkNewSince(mine) {
   newCm.forEach(function(c) { if (who.indexOf(c.from) < 0) who.push(c.from); });
   return { who: who, types: types, cm: newCm.length };
 }
-function toggleHitokotoMore() { hkOpenAll = !hkOpenAll; drawHitokoto(); }
 
 function hkToggleNames(i, k) {
   hkOpenPicker = null;
@@ -2426,9 +2478,21 @@ function hkUpdateBadge() {
   const peersOn = (document.getElementById('pane-peers') || {}).className === 'diary-pane on';
   if (peersOn) hkMarkPeersSeen();
   const seen = hkPeersSeen();
-  const n = hkOthers().filter(function(x) { return seen.indexOf(x.id) < 0; }).length;
+  const fresh = hkOthers().filter(function(x) { return seen.indexOf(x.id) < 0; });
+  const n = fresh.length;
   badge.textContent = n > 9 ? '9+' : String(n);
   badge.style.display = n ? 'inline-block' : 'none';
+  // ボタンの中（2行目）に、新しく書いた仲間の名前を出す（新しい順・2人まで名前、3人以上は「ほか◯人」）
+  const namesEl = document.getElementById('seg-names');
+  if (namesEl) {
+    if (n && !peersOn) {
+      const names = fresh.map(function(x) { return hkDn(x.name); });
+      namesEl.textContent = n <= 2 ? names.join('・') : names.slice(0, 2).join('・') + ' ほか' + (n - 2) + '人';
+      namesEl.style.display = 'block';
+    } else {
+      namesEl.style.display = 'none';
+    }
+  }
 }
 function hkMarkPeersSeen() {
   LS.set(LS_HK_PEERS_SEEN, JSON.stringify(hkOthers().map(function(x) { return x.id; })));
