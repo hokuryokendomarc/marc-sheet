@@ -1601,11 +1601,27 @@ function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 // ★何度か「ボタンを押しても何も起きない」という報告があったが、リモートでの
 //   原因特定が難しいため、JSエラーが発生した場合に画面上のトーストで
 //   見えるようにする（次回同じ現象が起きた時、エラー内容を確認できるように）。
+// ただし、ブラウザの拡張機能（MetaMask など）が出したエラーはこのページとは無関係なので表示しない。
+function isForeignError(msg, where) {
+  const s = String(msg || '') + ' ' + String(where || '');
+  return /(chrome|moz|safari(-web)?|ms-browser)-extension:\/\//i.test(s)
+      || /MetaMask|ethereum|web3|wallet|Could not establish connection|message port closed|Extension context/i.test(s);
+}
 window.addEventListener('error', function(e) {
-  try { showToast('⚠ エラーが発生しました：' + (e.message || '不明') + '（画面のスクショを先生に送ってください）'); } catch(_) {}
+  try {
+    // 他のサイトや拡張機能のスクリプトで起きたエラーは無視（このページのファイル以外）
+    if (e.filename && e.filename.indexOf(location.origin) !== 0 && location.protocol !== 'file:') return;
+    if (isForeignError(e.message, (e.error && e.error.stack) || e.filename)) return;
+    showToast('⚠ エラーが発生しました：' + (e.message || '不明') + '（画面のスクショを先生に送ってください）');
+  } catch(_) {}
 });
 window.addEventListener('unhandledrejection', function(e) {
-  try { showToast('⚠ 通信エラーが発生しました：' + (e.reason && e.reason.message || e.reason || '不明') + '（画面のスクショを先生に送ってください）'); } catch(_) {}
+  try {
+    const r = e.reason;
+    const msg = (r && r.message) || r || '不明';
+    if (isForeignError(msg, r && r.stack)) return;
+    showToast('⚠ 通信エラーが発生しました：' + msg + '（画面のスクショを先生に送ってください）');
+  } catch(_) {}
 });
 
 document.addEventListener('DOMContentLoaded', () => {
