@@ -1790,7 +1790,7 @@ function submitDiary(withAnalysis) {
     resetDiaryForm();
     showToast(withAnalysis ? '✓ 提出しました。分析を表示します' : '✓ 提出しました！');
     restore();
-    if (withAnalysis) { daLoad(name); daReveal(); }
+    if (withAnalysis) { daDays = DA_DEFAULT_DAYS; daCounts = null; daLoad(name); daReveal(); }
   })
   .catch(function(){
     showToast('⚠ 送信に失敗しました。再度お試しください');
@@ -1801,7 +1801,8 @@ function submitDiary(withAnalysis) {
 // ===== 日記の分析（期間を選べる：1週間／1か月／3か月／全期間） =====
 // GAS の analyzeDiary が数えた結果をそのまま表示する（文章による推測はしない）。
 const DA_PERIODS = [ { d: 7, label: '1週間' }, { d: 30, label: '1か月' }, { d: 90, label: '3か月' }, { d: 0, label: '全期間' } ];
-let daName = '', daDays = 30, daReq = 0, daCounts = null; // 開くたびに「1か月」から（前回の期間は覚えない）
+const DA_DEFAULT_DAYS = 7; // 開いたときの期間：直近1週間（前回選んだ期間は覚えない）
+let daName = '', daDays = DA_DEFAULT_DAYS, daReq = 0, daCounts = null;
 function daEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; });
 }
