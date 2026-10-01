@@ -12,17 +12,6 @@
 <link rel="apple-touch-icon" sizes="1024x1024" href="icon-ios-1024.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-android-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-android-512.png">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1a5fa8">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MARCシート">
-<link rel="apple-touch-icon" href="icon-ios-180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="icon-ios-152.png">
-<link rel="apple-touch-icon" sizes="167x167" href="icon-ios-167.png">
-<link rel="apple-touch-icon" sizes="1024x1024" href="icon-ios-1024.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-android-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-android-512.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>剣道部 MARCシート</title>
@@ -294,6 +283,86 @@ window.addEventListener('load', function () {
   .diary-submit-btn { width: 100%; margin-top: 6px; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-lt)); color: #fff; border: none; border-radius: var(--radius-md); font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: .04em; cursor: pointer; transition: all .2s; box-shadow: 0 3px 12px rgba(26,58,107,0.25); }
   .diary-submit-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
   .diary-submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  /* 提出ボタン2つを横並び（同じ色・同じ幅。左：提出＋分析 / 右：提出する） */
+  .diary-submit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .diary-submit-row .diary-submit-btn { margin-top: 0; min-height: 56px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.25; white-space: nowrap; letter-spacing: 0; font-size: clamp(13px, 3.9vw, 15px); }
+  .diary-submit-btn .sub { display: block; font-size: 10.5px; font-weight: 500; letter-spacing: 0; opacity: .8; margin-top: 2px; }
+  /* 日記の分析 */
+  .da-card { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-md); background: #F4F7FC; border: 1px solid rgba(26,58,107,0.15); color: var(--ink-soft); font-size: 13px; line-height: 1.7; }
+  .da-head { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--primary); font-size: 14px; margin-bottom: 4px; }
+  .da-head button { margin-left: auto; min-height: 30px !important; padding: 0 10px; border: 1px solid rgba(26,58,107,0.3); border-radius: 999px; background: var(--surface); color: var(--primary); font-family: inherit; font-size: 12px; cursor: pointer; }
+  .da-meta { font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; }
+  .da-sec { margin-top: 10px; }
+  .da-sec-title { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .da-avg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .da-avg div { background: var(--surface); border-radius: 10px; padding: 6px 4px; text-align: center; font-size: 11px; }
+  .da-avg b { display: block; font-size: 18px; color: var(--primary); line-height: 1.3; }
+  .da-avg small { display: block; font-size: 11px; color: var(--ink-muted); }
+  .da-row { background: var(--surface); border-radius: 10px; padding: 6px 10px; margin-bottom: 4px; }
+  .da-row b { color: var(--ink-soft); }
+  .da-note { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+  .da-period { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: rgba(26,58,107,0.08); border-radius: 999px; padding: 3px; margin: 6px 0 8px; }
+  .da-period button { min-height: 32px !important; border: none; border-radius: 999px; background: transparent; color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; }
+  .da-period button.on { background: var(--primary); color: #fff; }
+  .da-bar-block { background: var(--surface); border-radius: 10px; padding: 8px 10px 6px; margin-bottom: 6px; }
+  .da-bar-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 12px; }
+  .da-bar-head b { color: var(--ink-soft); font-size: 13px; }
+  .da-bar-avg { color: var(--primary); font-weight: 700; }
+  .da-bar-trend { color: var(--ink-muted); font-size: 11px; }
+  .da-bars { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 4px; }
+  .da-bar-col { display: flex; flex-direction: column; align-items: center; }
+  .da-bar-n { font-size: 10.5px; color: var(--ink-soft); height: 15px; line-height: 15px; }
+  .da-bar-track { width: 100%; max-width: 34px; height: 56px; display: flex; align-items: flex-end; border-bottom: 1px solid rgba(26,58,107,0.25); }
+  .da-bar { width: 100%; background: var(--primary); border-radius: 4px 4px 0 0; }
+  .da-bar-x { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+  .da-bar-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-muted); margin-top: 1px; }
+  .da-tbl { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border-radius: 10px; overflow: hidden; font-size: 12px; }
+  .da-tbl th, .da-tbl td { padding: 6px 8px; text-align: center; border-bottom: 1px solid rgba(26,58,107,0.08); }
+  .da-tbl thead th { font-size: 11px; color: var(--ink-muted); font-weight: 500; white-space: nowrap; padding: 6px 4px; }
+  .da-tbl tbody th { text-align: left; font-weight: 700; color: var(--ink-soft); }
+  .da-tbl td { font-weight: 700; color: var(--primary); font-size: 14px; }
+  .da-tbl tr:last-child th, .da-tbl tr:last-child td { border-bottom: none; }
+  .da-q5 { display: grid; grid-template-columns: 1fr; gap: 4px; }
+  .da-q5 div { display: flex; justify-content: space-between; gap: 6px; background: var(--surface); border-radius: 8px; padding: 5px 9px; font-size: 12px; }
+  .da-q5 b { color: var(--primary); white-space: nowrap; }
+  .da-rx { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .da-rx div { background: var(--surface); border-radius: 10px; padding: 6px 4px; text-align: center; }
+  .da-rx-icon { font-size: 16px; }
+  .da-rx b { display: block; font-size: 18px; color: var(--primary); line-height: 1.2; }
+  .da-rx small { display: block; font-size: 11px; color: var(--ink-muted); }
+  .da-sub-title { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin: 8px 0 4px; }
+  .da-cm { background: var(--surface); border-radius: 10px; padding: 6px 10px; margin-bottom: 4px; }
+  .da-cm-text { color: var(--ink-soft); }
+  .da-cm-meta { font-size: 11px; color: var(--ink-muted); }
+  /* 横棒グラフ */
+  .da-hbars { display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-radius: 10px; padding: 10px; }
+  .da-hbar-label { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-soft); margin-bottom: 3px; }
+  .da-hbar-label b { color: var(--primary); white-space: nowrap; }
+  .da-hbar-track { flex: 1; height: 12px; background: rgba(26,58,107,0.06); border-radius: 0 4px 4px 0; overflow: hidden; }
+  .da-hbar { height: 100%; background: var(--primary); border-radius: 0 4px 4px 0; }
+  .da-hbar.lo { background: #9fb3d6; }
+  .da-hbar-detail { font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; }
+  .da-stack { display: flex; gap: 2px; height: 100%; }
+  .da-seg { height: 100%; min-width: 3px; }
+  .da-seg:last-child { border-radius: 0 4px 4px 0; }
+  .o-good { background: #2a5298; } .o-some { background: #6f9be0; } .o-bad { background: #d9822b; } .o-other { background: #cfd6e2; }
+  .da-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--ink-soft); margin-bottom: 6px; }
+  .da-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+  /* 続けて意識（塗りのマス） */
+  .da-tl { background: var(--surface); border-radius: 10px; padding: 10px; }
+  .da-tl-row { margin-bottom: 8px; }
+  .da-tl-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-soft); margin-bottom: 3px; }
+  .da-tl-head b { color: var(--primary); white-space: nowrap; }
+  .da-tl-cells { display: grid; gap: 2px; }
+  .da-tl-cells i { display: block; height: 14px; border-radius: 3px; background: rgba(26,58,107,0.08); }
+  .da-tl-cells i.on { background: var(--primary); }
+  .da-tl-axis { display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-muted); }
+  /* 充実度の高い日・低い日 */
+  .da-gbar-block { background: var(--surface); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
+  .da-gbar-name { font-size: 12px; font-weight: 700; color: var(--ink-soft); margin-bottom: 4px; }
+  .da-gbar { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .da-gbar-lab { width: 3.6em; font-size: 11px; color: var(--ink-muted); white-space: nowrap; }
+  .da-gbar b { width: 2em; text-align: right; font-size: 13px; color: var(--primary); }
   /* ===== リーダー配置表 ===== */
   .leaders-wrap { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); padding: 16px 20px; margin-bottom: 14px; }
   .leaders-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -586,13 +655,19 @@ window.addEventListener('load', function () {
         <textarea id="diary-free" class="diary-free" placeholder="自由に記入（部員全員に公開されます）"></textarea>
       </div>
 
-      <button class="diary-submit-btn" id="diary-submit-btn" onclick="submitDiary()">✦ 提出する</button>
+      <div class="diary-submit-row">
+        <button class="diary-submit-btn analyze" id="diary-submit-analyze-btn" onclick="submitDiary(true)">📊 提出＋分析<span class="sub">期間を選んで振り返る</span></button>
+        <button class="diary-submit-btn" id="diary-submit-btn" onclick="submitDiary(false)">✦ 提出する</button>
+      </div>
 
       <!-- 提出後の完了表示（画面は自動で切り替えない） -->
       <div class="diary-done" id="diary-done" style="display:none;">
         <span>✓ 提出しました</span>
         <button type="button" onclick="hkSwitchPane('peers')">💬 仲間の一言を見る ›</button>
       </div>
+
+      <!-- 日記の分析（「提出＋分析」のときだけ表示。期間はカード内で選ぶ） -->
+      <div class="da-card" id="diary-analysis" style="display:none;"></div>
       </div>
 
       <!-- ===== 仲間の一言 ===== -->
@@ -1578,8 +1653,8 @@ function loadDiaryName() {
   }
 }
 
-// 提出
-function submitDiary() {
+// 提出（withAnalysis=true のときは、提出後に日記の分析を表示する）
+function submitDiary(withAnalysis) {
   const nameEl = document.getElementById('diary-name');
   const name = (nameEl.value || '').trim();
   if (!name) { showToast('⚠ 名前を入力してください'); editDiaryName(); return; }
@@ -1598,8 +1673,13 @@ function submitDiary() {
     .map(function(b){ return b.textContent.trim(); });
   const free = (document.getElementById('diary-free').value || '').trim();
 
-  const btn = document.getElementById('diary-submit-btn');
-  btn.textContent = '送信中…'; btn.disabled = true;
+  const btn  = document.getElementById('diary-submit-btn');
+  const btn2 = document.getElementById('diary-submit-analyze-btn');
+  const label1 = btn.innerHTML, label2 = btn2.innerHTML;
+  const restore = function() { btn.innerHTML = label1; btn2.innerHTML = label2; btn.disabled = false; btn2.disabled = false; };
+  (withAnalysis ? btn2 : btn).textContent = '送信中…';
+  btn.disabled = true; btn2.disabled = true;
+  daHide();
 
   const data = {
     記録種別: '剣道日記',
@@ -1626,12 +1706,218 @@ function submitDiary() {
     if (q4newCustom) q4AddCustom(q4newCustom); // 次回から選択肢として出す
     resetDiaryForm();
     showToast('✓ 提出しました！');
-    btn.textContent = '✦ 提出する'; btn.disabled = false;
+    restore();
+    if (withAnalysis) daLoad(name);
   })
   .catch(function(){
     showToast('⚠ 送信に失敗しました。再度お試しください');
-    btn.textContent = '✦ 提出する'; btn.disabled = false;
+    restore();
   });
+}
+
+// ===== 日記の分析（期間を選べる：1週間／1か月／3か月／全期間） =====
+// GAS の analyzeDiary が数えた結果をそのまま表示する（文章による推測はしない）。
+const DA_PERIODS = [ { d: 7, label: '1週間' }, { d: 30, label: '1か月' }, { d: 90, label: '3か月' }, { d: 0, label: '全期間' } ];
+const LS_DA_PERIOD = 'marc_da_period'; // 最後に選んだ期間（端末ごと）
+let daName = '', daDays = 30, daReq = 0;
+function daEsc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; });
+}
+function daHide() {
+  const el = document.getElementById('diary-analysis');
+  if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+}
+function daHead() {
+  return '<div class="da-head">📊 日記の分析<button type="button" onclick="daHide()">閉じる</button></div>'
+    + '<div class="da-period" role="group" aria-label="期間">'
+    + DA_PERIODS.map(function(p) {
+        return '<button type="button" class="' + (p.d === daDays ? 'on' : '') + '" aria-pressed="' + (p.d === daDays) + '" onclick="daSetPeriod(' + p.d + ')">' + p.label + '</button>';
+      }).join('')
+    + '</div>';
+}
+function daSetPeriod(d) {
+  if (d === daDays) return;
+  daDays = d;
+  try { localStorage.setItem(LS_DA_PERIOD, String(d)); } catch (e) {}
+  daLoad(daName);
+}
+function daLoad(name) {
+  const el = document.getElementById('diary-analysis');
+  if (!el) return;
+  daName = String(name || '').replace(/[　\s]+/g, '');
+  if (!daLoad._init) {
+    daLoad._init = true;
+    let saved = null;
+    try { saved = localStorage.getItem(LS_DA_PERIOD); } catch (e) {}
+    const v = saved === null ? NaN : parseInt(saved, 10);
+    if (DA_PERIODS.some(function(p) { return p.d === v; })) daDays = v;
+  }
+  const req = ++daReq; // 期間を素早く切り替えたとき、古い結果で上書きしない
+  el.innerHTML = daHead() + '<div class="da-meta">分析中…</div>';
+  el.style.display = 'block';
+  fetch(GAS_URL + '?' + new URLSearchParams({ action: 'analyzeDiary', name: daName, days: String(daDays), _: Date.now() }).toString())
+    .then(function(res) { return res.text(); })
+    .then(function(text) {
+      if (req !== daReq) return;
+      const json = JSON.parse(text);
+      if (json.status !== 'ok') throw new Error(json.message || 'error');
+      el.innerHTML = daHead() + daRender(json);
+    })
+    .catch(function() {
+      if (req !== daReq) return;
+      el.innerHTML = daHead() + '<div class="da-meta">分析を読み込めませんでした。日記は提出済みです。時間をおいてもう一度お試しください。</div>';
+    });
+}
+function daLabel(s) { return String(s || '').replace(/^その他:/, ''); } // 本人が育てた項目は名前だけ出す
+function daNum(v) { return (v == null) ? '—' : Number(v).toFixed(1); }
+
+// Q1〜Q3：1〜5を選んだ日数の棒グラフ
+const DA_SCALES = [
+  { q: 'q1', name: 'コンディション', lo: '1＝かなり悪い', hi: '5＝かなり良い' },
+  { q: 'q2', name: '稽古の負荷',     lo: '1＝とても楽',   hi: '5＝とてもきつい' },
+  { q: 'q3', name: '充実度',         lo: '1＝まったく充実せず', hi: '5＝とても充実' }
+];
+function daBars(d, sc) {
+  const dist = (d.dist && d.dist[sc.q]) || [0, 0, 0, 0, 0];
+  const max = Math.max.apply(null, dist.concat([1]));
+  const t = d.trend;
+  let trend = '';
+  if (t && t.recent[sc.q] != null && t.before[sc.q] != null) {
+    const diff = Math.round((t.recent[sc.q] - t.before[sc.q]) * 10) / 10;
+    trend = '<span class="da-bar-trend">直近' + t.recentN + '回 ' + daNum(t.recent[sc.q]) + '（' + (diff > 0 ? '+' : '') + diff.toFixed(1) + '）</span>';
+  }
+  let h = '<div class="da-bar-block">'
+    + '<div class="da-bar-head"><b>' + sc.name + '</b><span class="da-bar-avg">平均 ' + daNum(d.avg && d.avg[sc.q]) + '</span>' + trend + '</div>'
+    + '<div class="da-bars" role="img" aria-label="' + sc.name + 'の1〜5の日数：' + dist.map(function(c, i) { return (i + 1) + 'は' + c + '日'; }).join('、') + '">';
+  dist.forEach(function(c, i) {
+    const pct = c ? Math.max(6, Math.round(c / max * 100)) : 0;
+    h += '<div class="da-bar-col"><span class="da-bar-n">' + (c ? c + '日' : '') + '</span>'
+       + '<div class="da-bar-track"><div class="da-bar" style="height:' + pct + '%"></div></div>'
+       + '<span class="da-bar-x">' + (i + 1) + '</span></div>';
+  });
+  h += '</div><div class="da-bar-ends"><span>' + sc.lo + '</span><span>' + sc.hi + '</span></div></div>';
+  return h;
+}
+
+// 仲間からの反応
+function daPeers(d) {
+  const p = d.peers;
+  if (!p) return '';
+  const rx = p.reactions || {};
+  const types = (typeof HK_TYPES !== 'undefined') ? HK_TYPES : [ { k: 'nice', icon: '👍', label: 'ナイス' }, { k: 'wakaru', icon: '🤝', label: 'わかる' }, { k: 'sanko', icon: '💡', label: '参考になる' } ];
+  const totalRx = types.reduce(function(a, t) { return a + (rx[t.k] || 0); }, 0);
+  let h = '<div class="da-sec"><div class="da-sec-title">仲間からの反応</div>';
+  if (!totalRx && !p.commentTotal) return h + '<div class="da-row">この期間の反応はまだありません。</div></div>';
+  h += '<div class="da-rx">' + types.map(function(t) {
+    return '<div><span class="da-rx-icon">' + t.icon + '</span><b>' + (rx[t.k] || 0) + '</b><small>' + t.label + '</small></div>';
+  }).join('') + '</div>';
+  if (p.reactors && p.reactors.length) {
+    h += '<div class="da-sub-title">反応をくれた仲間</div>' + daHBars(p.reactors.map(function(r) { return { label: r.name, value: r.count }; }), '回');
+  }
+  if (p.commentTotal) {
+    h += '<div class="da-sub-title">💬 コメント ' + p.commentTotal + '件' + (p.commentTotal > p.comments.length ? '（新しい' + p.comments.length + '件を表示）' : '') + '</div>';
+    p.comments.forEach(function(c) {
+      h += '<div class="da-cm"><div class="da-cm-text">' + daEsc(c.text) + '</div><div class="da-cm-meta">' + daEsc(c.from) + '　' + daEsc(c.date) + '</div></div>';
+    });
+  }
+  return h + '</div>';
+}
+
+// 横棒グラフ（1系列）：items = [{label, value, text}]
+function daHBars(items, unit) {
+  const max = Math.max.apply(null, items.map(function(x) { return x.value; }).concat([1]));
+  return '<div class="da-hbars">' + items.map(function(x) {
+    const pct = x.value ? Math.max(3, Math.round(x.value / max * 100)) : 0;
+    return '<div class="da-hbar-row"><div class="da-hbar-label"><span>' + daEsc(x.label) + '</span><b>' + x.value + (unit || '') + '</b></div>'
+      + '<div class="da-hbar-track"><div class="da-hbar" style="width:' + pct + '%"></div></div></div>';
+  }).join('') + '</div>';
+}
+
+// よく意識したこと：項目ごとの日数（横棒）＋その日の Q5 の結果で色分け
+const DA_OUTCOMES = [
+  { k: 'good',  label: 'うまくできた',       short: 'うまく',   cls: 'o-good' },
+  { k: 'some',  label: '少しうまくできた',   short: '少し',     cls: 'o-some' },
+  { k: 'bad',   label: 'うまくできなかった', short: 'できず',   cls: 'o-bad' },
+  { k: 'other', label: 'それ以外',           short: 'それ以外', cls: 'o-other' }
+];
+function daThemes(d) {
+  if (!d.themes || !d.themes.length) return '';
+  const max = Math.max.apply(null, d.themes.map(function(x) { return x.count; }).concat([1]));
+  let h = '<div class="da-sec"><div class="da-sec-title">よく意識したこと（Q4）と、その日のQ5</div>'
+    + '<div class="da-legend">' + DA_OUTCOMES.map(function(o) { return '<span><i class="' + o.cls + '"></i>' + o.label + '</span>'; }).join('') + '</div>'
+    + '<div class="da-hbars">';
+  d.themes.forEach(function(x) {
+    const segs = DA_OUTCOMES.filter(function(o) { return x[o.k]; }).map(function(o) {
+      return '<div class="da-seg ' + o.cls + '" style="flex:' + x[o.k] + '" title="' + o.label + ' ' + x[o.k] + '日"></div>';
+    }).join('');
+    const detail = DA_OUTCOMES.filter(function(o) { return x[o.k]; }).map(function(o) { return o.short + ' ' + x[o.k]; }).join('　');
+    h += '<div class="da-hbar-row"><div class="da-hbar-label"><span>' + daEsc(daLabel(x.label)) + '</span><b>' + x.count + '日</b></div>'
+       + '<div class="da-hbar-track"><div class="da-stack" style="width:' + Math.max(3, Math.round(x.count / max * 100)) + '%">' + segs + '</div></div>'
+       + '<div class="da-hbar-detail">' + detail + '</div></div>';
+  });
+  return h + '</div><div class="da-note">同じ日にQ5を複数選んだ日は、うまくできた→少しうまくできた→うまくできなかったの順で1つに数えています</div></div>';
+}
+
+// 続けて意識していること：記録した日を左から古い順に並べ、選んだ日を塗る
+function daTimeline(d) {
+  const t = d.timeline;
+  if (!t || !t.rows || !t.rows.length || !t.dates.length) return '';
+  const n = t.dates.length;
+  let h = '<div class="da-sec"><div class="da-sec-title">続けて意識していること</div>'
+    + '<div class="da-note" style="margin:0 0 6px;">記録した日を左から古い順に並べ、その項目を選んだ日を塗っています'
+    + (t.total > n ? '（直近' + n + '回分）' : '') + '</div><div class="da-tl">';
+  t.rows.forEach(function(r) {
+    h += '<div class="da-tl-row"><div class="da-tl-head"><span>' + daEsc(daLabel(r.label)) + '</span>'
+       + (r.run >= 2 ? '<b>' + r.run + '回連続</b>' : '') + '</div>'
+       + '<div class="da-tl-cells" style="grid-template-columns:repeat(' + n + ',1fr)">'
+       + r.marks.map(function(m, i) { return '<i class="' + (m ? 'on' : '') + '" title="' + daEsc(t.dates[i]) + (m ? '：選んだ' : '') + '"></i>'; }).join('')
+       + '</div></div>';
+  });
+  return h + '<div class="da-tl-axis"><span>' + daEsc(t.dates[0]) + '</span><span>' + daEsc(t.dates[n - 1]) + '</span></div></div></div>';
+}
+
+// 充実度が高かった日の特徴：コンディション・負荷の平均を、高い日／低い日で並べる（0〜5）
+function daQ3Split(d) {
+  const s = d.q3split;
+  if (!s) return '';
+  const row = function(name, a, b) {
+    const bar = function(v, cls, lab) {
+      return '<div class="da-gbar"><span class="da-gbar-lab">' + lab + '</span><div class="da-hbar-track"><div class="da-hbar ' + cls + '" style="width:' + (v ? Math.round(v / 5 * 100) : 0) + '%"></div></div><b>' + daNum(v) + '</b></div>';
+    };
+    return '<div class="da-gbar-block"><div class="da-gbar-name">' + name + '</div>'
+      + bar(a, '', '高い日') + bar(b, 'lo', '低い日') + '</div>';
+  };
+  return '<div class="da-sec"><div class="da-sec-title">充実度が高かった日の特徴</div>'
+    + '<div class="da-note" style="margin:0 0 6px;">高い日＝充実度4以上（' + s.hiN + '日）／低い日＝3以下（' + s.loN + '日）。数字は平均（5点満点）</div>'
+    + row('コンディション', s.hi.q1, s.lo.q1) + row('稽古の負荷', s.hi.q2, s.lo.q2) + '</div>';
+}
+
+// Q5 の合計（横棒）
+function daQ5(d) {
+  if (!d.q5total) return '';
+  const items = d.q5total.filter(function(x) { return x.count > 0; });
+  if (!items.length) return '';
+  return '<div class="da-sec"><div class="da-sec-title">Q5 の合計</div>'
+    + daHBars(items.map(function(x) { return { label: x.label, value: x.count }; }), '日') + '</div>';
+}
+
+function daRender(d) {
+  let h = '';
+  const period = d.periodDays ? (daEsc(d.periodFrom) + '〜' + daEsc(d.periodTo) + '（' + d.periodDays + '日間）')
+                              : ('全期間' + (d.periodFrom ? '（最初の日記 ' + daEsc(d.periodFrom) + '）' : ''));
+  if (!d.days) {
+    return '<div class="da-meta">' + period + '<br>この期間の日記の記録が見つかりません。提出直後は反映まで少しかかることがあります。</div>' + daPeers(d);
+  }
+  h += '<div class="da-meta">' + period + '<br>記録 ' + d.days + '日分（同じ日に複数回出した場合は最後の1回）</div>';
+  if (d.days < d.minDays) {
+    return h + '<div class="da-meta">この期間の記録が' + d.minDays + '日分たまると分析を表示します（あと' + (d.minDays - d.days) + '日）。</div>' + daPeers(d);
+  }
+  // Q1〜Q3 の棒グラフ
+  h += '<div class="da-sec"><div class="da-sec-title">Q1〜Q3　1〜5を選んだ日数</div>'
+     + DA_SCALES.map(function(sc) { return daBars(d, sc); }).join('')
+     + (d.trend ? '<div class="da-note">（ ）内は、それ以前' + d.trend.beforeN + '回の平均との差</div>' : '') + '</div>';
+  h += daThemes(d) + daTimeline(d) + daQ3Split(d) + daQ5(d);
+  return h + daPeers(d);
 }
 
 // 名前以外をクリア
