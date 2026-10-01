@@ -1705,9 +1705,9 @@ function submitDiary(withAnalysis) {
     hkAfterSubmit(name, free);
     if (q4newCustom) q4AddCustom(q4newCustom); // 次回から選択肢として出す
     resetDiaryForm();
-    showToast('✓ 提出しました！');
+    showToast(withAnalysis ? '✓ 提出しました。分析を表示します' : '✓ 提出しました！');
     restore();
-    if (withAnalysis) daLoad(name);
+    if (withAnalysis) { daLoad(name); daReveal(); }
   })
   .catch(function(){
     showToast('⚠ 送信に失敗しました。再度お試しください');
@@ -1734,6 +1734,18 @@ function daHead() {
         return '<button type="button" class="' + (p.d === daDays ? 'on' : '') + '" aria-pressed="' + (p.d === daDays) + '" onclick="daSetPeriod(' + p.d + ')">' + p.label + '</button>';
       }).join('')
     + '</div>';
+}
+// 提出直後：分析カードが画面の下に隠れたままにならないよう、カードの先頭まで自動でスクロールする
+// （上部に固定されたタブバーの下に来る位置。動きを減らす設定の端末ではアニメーションしない）
+function daReveal() {
+  const el = document.getElementById('diary-analysis');
+  if (!el) return;
+  const bar = document.querySelector('.tab-bar');
+  const off = (bar ? Math.max(0, bar.getBoundingClientRect().bottom) : 0) + 12;
+  const top = el.getBoundingClientRect().top + window.pageYOffset - off;
+  let reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
 }
 function daSetPeriod(d) {
   if (d === daDays) return;
