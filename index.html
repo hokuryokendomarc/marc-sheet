@@ -2073,8 +2073,12 @@ function daRender(d) {
     return '<div class="da-meta">' + period + '<br>この期間の日記の記録が見つかりません。提出直後は反映まで少しかかることがあります。</div>' + daPeers(d);
   }
   h += '<div class="da-meta">' + period + '　記録 ' + d.days + '日分</div>';
+  // GAS が古い版（v11 より前）のときは、グラフ用のデータが返ってこない
+  if (d.wave === undefined) {
+    return h + '<div class="da-row" style="color:#b45309;">サーバー側（GAS）が古い版のため、グラフを表示できません。GAS を最新版に置き換え、「新バージョン」でデプロイしてください。</div>' + daPeers(d);
+  }
   if (d.days < d.minDays) {
-    return h + '<div class="da-meta">この期間の記録が' + d.minDays + '日分たまると分析を表示します（あと' + (d.minDays - d.days) + '日）。</div>' + daPeers(d);
+    return h + daWave(d) + '<div class="da-meta">この期間の記録が' + d.minDays + '日分たまると分析を表示します（あと' + (d.minDays - d.days) + '日）。</div>' + daPeers(d);
   }
   // 並び：① 調子の波 → ② 今のテーマ（進み具合） → ③ 仲間からの反応 → 次の稽古へ
   return h + daWave(d) + daFocus(d) + daPeers(d) + daNext(d)
