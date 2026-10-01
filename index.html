@@ -387,6 +387,8 @@ window.addEventListener('load', function () {
   .da-half-lab small { font-weight: 400; color: var(--ink-muted); margin-left: 6px; }
   .da-wave-box { background: var(--surface); border-radius: 10px; padding: 8px 8px 6px; }
   .da-wave { width: 100%; height: auto; display: block; }
+  /* PCなど横に広い画面で、グラフが縦に大きくなりすぎないように幅を抑える */
+  #diary-analysis { max-width: 640px; margin-left: auto; margin-right: auto; }
   .da-wave .w-grid { stroke: rgba(26,58,107,0.10); stroke-width: 1; }
   .da-wave .w-ax { font-size: 8px; fill: var(--ink-muted); }
   .da-wave .w-tick { stroke: rgba(26,58,107,0.35); stroke-width: 1; }
@@ -417,6 +419,7 @@ window.addEventListener('load', function () {
   .da-key-btns button { display: inline-flex; align-items: center; min-height: 30px !important; padding: 0 10px; border: 1px solid rgba(26,58,107,0.25); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font-family: inherit; font-size: 11.5px; cursor: pointer; }
   .da-key-btns button[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
   .da-wave .w-ax { font-size: 11px; }
+  .da-wave .w-date { font-size: 10.5px; fill: var(--ink-muted); }
   .da-wave .w-grid.w-mid { stroke: rgba(26,58,107,0.22); }
   .da-wave .w-q3 { stroke-width: 2.5; }
   .da-theme { display: flex; flex-direction: column; margin: 0 0 8px; }
@@ -1800,7 +1803,8 @@ function submitDiary(withAnalysis) {
 
 // ===== 日記の分析（期間を選べる：1週間／1か月／3か月／全期間） =====
 // GAS の analyzeDiary が数えた結果をそのまま表示する（文章による推測はしない）。
-const DA_PERIODS = [ { d: 7, label: '1週間' }, { d: 30, label: '1か月' }, { d: 90, label: '3か月' }, { d: 0, label: '全期間' } ];
+// 範囲は日付ではなく「直近の記録◯回分」（記録のない期間を選んで空になることがない）
+const DA_PERIODS = [ { d: 7, label: '直近7回' }, { d: 30, label: '直近30回' }, { d: 90, label: '直近90回' }, { d: 0, label: '全部' } ];
 const DA_DEFAULT_DAYS = 7; // 開いたときの期間：直近1週間（前回選んだ期間は覚えない）
 let daName = '', daDays = DA_DEFAULT_DAYS, daReq = 0, daCounts = null;
 function daEsc(s) {
@@ -1816,7 +1820,7 @@ function daHead() {
     + DA_PERIODS.map(function(p) {
         const c = daCounts ? daCounts[p.d] : null;
         return '<button type="button" class="' + (p.d === daDays ? 'on' : '') + (c === 0 ? ' empty' : '') + '" aria-pressed="' + (p.d === daDays) + '" onclick="daSetPeriod(' + p.d + ')">'
-          + p.label + (c != null ? '<small>' + c + '日分</small>' : '') + '</button>';
+          + p.label + (c != null && (p.d === 0 || c < p.d) ? '<small>' + c + '回分</small>' : '') + '</button>';
       }).join('')
     + '</div>';
 }
@@ -1869,7 +1873,7 @@ function daPeers(d) {
   const types = (typeof HK_TYPES !== 'undefined') ? HK_TYPES : [ { k: 'nice', icon: '👍', label: 'ナイス' }, { k: 'wakaru', icon: '🤝', label: 'わかる' }, { k: 'sanko', icon: '💡', label: '参考になる' } ];
   const totalRx = types.reduce(function(a, t) { return a + (rx[t.k] || 0); }, 0);
   let h = '<div class="da-sec"><div class="da-sec-title">③ 仲間からの反応</div>';
-  if (!totalRx && !p.commentTotal) return h + '<div class="da-row">この期間の反応はまだありません。</div></div>';
+  if (!totalRx && !p.commentTotal) return h + '<div class="da-row">この範囲の反応はまだありません。</div></div>';
   h += '<div class="da-rx">' + types.map(function(t) {
     return '<div><span class="da-rx-icon">' + t.icon + '</span><b>' + (rx[t.k] || 0) + '</b><small>' + t.label + '</small></div>';
   }).join('') + '</div>';
@@ -1953,7 +1957,7 @@ function daFocus(d) {
 
   let h = '<div class="da-sec"><div class="da-sec-title">② 今のテーマ</div>'
     + '<div class="da-theme"><span class="da-theme-name">' + daEsc(daLabel(f.label)) + '</span>'
-    + '<span class="da-theme-sub">この期間にいちばん多く選んだ項目・' + f.count + '回' + (f.run >= 2 ? '・最新まで' + f.run + '回続けて選択' : '') + '</span></div>'
+    + '<span class="da-theme-sub">この範囲でいちばん多く選んだ項目・' + f.count + '回' + (f.run >= 2 ? '・最新まで' + f.run + '回続けて選択' : '') + '</span></div>'
     + '<div class="da-box"><div class="da-box-title">選んだ日のQ5の結果' + (f.seqTotal > n ? '（直近' + n + '回）' : '') + '</div>' + svg
     + '<div class="da-tl-axis" style="padding-left:' + (L / W * 100).toFixed(1) + '%"><span>' + daEsc(seq[0].d) + '</span>' + (n > 1 ? '<span>' + daEsc(seq[n - 1].d) + '</span>' : '') + '</div>'
     + '<div class="da-wave-info" id="da-seq-info">点を押すと、その日の結果が出ます</div>'
@@ -1991,14 +1995,14 @@ function daSeqShow(i) {
   }
 }
 
-// ① 調子の波：日付ごとの充実度・コンディション・負荷（1〜5）。記録のない日は点なし
+// ① 調子の波：記録した日ごとの充実度・コンディション・負荷（1〜5）。記録した日だけを詰めて並べる
 let daWaveData = null;
 function daWave(d) {
   const w = d.wave;
   if (!w || !w.days || !w.days.length) return '';
   daWaveData = w.days;
   const days = w.days, n = days.length;
-  const W = 300, H = 140, L = 20, R = 8, T = 10, B = 14;
+  const W = 300, H = 156, L = 20, R = 8, T = 10, B = 30;
   const xs = function(i) { return n === 1 ? (L + (W - L - R) / 2) : L + i * (W - L - R) / (n - 1); };
   const ys = function(v) { return T + (5 - v) * (H - T - B) / 4; };
   const series = [ { k: 'q2', cls: 'w-q2' }, { k: 'q1', cls: 'w-q1' }, { k: 'q3', cls: 'w-q3' } ]; // 充実度を最前面に
@@ -2008,7 +2012,6 @@ function daWave(d) {
     svg += '<line class="w-grid' + (v === 3 ? ' w-mid' : '') + '" x1="' + L + '" x2="' + (W - R) + '" y1="' + ys(v) + '" y2="' + ys(v) + '"/>'
          + '<text class="w-ax" x="' + (L - 6) + '" y="' + (ys(v) + 3.5) + '" text-anchor="end">' + v + '</text>';
   });
-  days.forEach(function(x, i) { if (x.q3 || x.q1 || x.q2) svg += '<line class="w-tick" x1="' + xs(i) + '" x2="' + xs(i) + '" y1="' + (H - B + 3) + '" y2="' + (H - B + 7) + '"/>'; });
   series.forEach(function(s) {
     const pts = [];
     days.forEach(function(x, i) { if (x[s.k]) pts.push([xs(i), ys(x[s.k])]); });
@@ -2016,12 +2019,20 @@ function daWave(d) {
     pts.forEach(function(p) { svg += '<circle class="' + s.cls + '-pt" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + r + '"/>'; });
   });
   svg += '<line id="da-wave-cur" class="w-cur" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '" style="display:none"/>';
+  // 日付の目盛り（点の真下に置く）：最初・真ん中・最後
+  const ticks = n === 1 ? [0] : (n >= 5 ? [0, Math.floor((n - 1) / 2), n - 1] : [0, n - 1]);
+  ticks.forEach(function(i, j) {
+    const anchor = n === 1 ? 'middle' : (j === 0 ? 'start' : (i === n - 1 ? 'end' : 'middle'));
+    svg += '<line class="w-tick" x1="' + xs(i).toFixed(1) + '" x2="' + xs(i).toFixed(1) + '" y1="' + (H - B + 2) + '" y2="' + (H - B + 6) + '"/>'
+         + '<text class="w-date" x="' + (anchor === 'start' ? xs(i) - 4 : anchor === 'end' ? xs(i) + 4 : xs(i)).toFixed(1) + '" y="' + (H - B + 18) + '" text-anchor="' + anchor + '">' + daEsc(days[i].d) + '</text>';
+  });
   const bw = n === 1 ? (W - L - R) : (W - L - R) / (n - 1);
   days.forEach(function(x, i) {
     svg += '<rect class="w-hit" x="' + (xs(i) - bw / 2).toFixed(1) + '" y="0" width="' + bw.toFixed(1) + '" height="' + H + '" onclick="daWaveShow(' + i + ')"/>';
   });
   svg += '</svg>';
   const mid = Math.floor((n - 1) / 2);
+  const recN = days.filter(function(x) { return x.q1 || x.q2 || x.q3; }).length;
   return '<div class="da-sec"><div class="da-sec-title">① 調子の波</div>'
     + '<div class="da-box">'
     + '<div class="da-key da-key-btns" style="margin:0 0 4px;">'
@@ -2030,8 +2041,9 @@ function daWave(d) {
     + '<button type="button" aria-pressed="true" onclick="daWaveToggle(this,\'q2\')"><i class="k-line k-q2"></i>負荷（5＝きつい）</button></div>'
     + '<div class="da-note" style="margin:0 0 2px;">名前を押すと、その線を消したり出したりできます</div>'
     + svg
-    + '<div class="da-tl-axis" style="padding-left:' + (L / W * 100).toFixed(1) + '%"><span>' + daEsc(days[0].d) + '</span>' + (n > 2 ? '<span>' + daEsc(days[mid].d) + '</span>' : '') + '<span>' + daEsc(days[n - 1].d) + '</span></div>'
     + '<div class="da-wave-info" id="da-wave-info">グラフを押すと、その日の値が出ます</div></div>'
+    + (recN === 0 ? '<div class="da-row" style="color:#b45309;">この範囲の日記は、Q1〜Q3（コンディション・負荷・充実度）が未記入のため、点を表示できません</div>' : '')
+    + (recN === 1 ? '<div class="da-note">Q1〜Q3が記入された記録が1回分なので、点だけ表示しています（2回分以上で線になります）</div>' : '')
     + (w.capped ? '<div class="da-note">直近90日分を表示しています</div>' : '') + '</div>';
 }
 // 線の表示・非表示（見たい線だけに絞れる）
@@ -2069,34 +2081,22 @@ function daNext(d) {
 
 function daRender(d) {
   let h = '';
-  const period = d.periodDays ? (daEsc(d.periodFrom) + '〜' + daEsc(d.periodTo) + '（' + d.periodDays + '日間）')
-                              : ('全期間' + (d.periodFrom ? '（最初の日記 ' + daEsc(d.periodFrom) + '）' : ''));
+  const lab = (DA_PERIODS.find(function(p) { return p.d === d.periodDays; }) || {}).label || '';
   if (!d.days) {
-    // 選んだ期間に記録がない：自動で期間は変えず、記録のある期間を案内する
-    const lab = (DA_PERIODS.find(function(p) { return p.d === d.periodDays; }) || {}).label || 'この期間';
-    let msg = '<div class="da-empty"><div>' + lab + 'の間に、日記の記録がありません。</div>';
-    if (d.lastRecord) msg += '<div class="da-empty-s">最後の記録：' + daEsc(d.lastRecord) + '</div>';
-    const alt = DA_PERIODS.filter(function(p) { return d.periodCounts && d.periodCounts[p.d] > 0; });
-    if (alt.length) {
-      msg += '<div class="da-empty-btns">' + alt.map(function(p) {
-        return '<button type="button" onclick="daSetPeriod(' + p.d + ')">' + p.label + 'で見る（' + d.periodCounts[p.d] + '日分）</button>';
-      }).join('') + '</div>';
-    } else {
-      msg += '<div class="da-empty-s">提出直後は、反映まで少しかかることがあります。</div>';
-    }
-    return '<div class="da-meta">' + period + '</div>' + msg + '</div>' + daPeers(d);
+    return '<div class="da-empty"><div>まだ日記の記録がありません。</div><div class="da-empty-s">提出直後は、反映まで少しかかることがあります。</div></div>' + daPeers(d);
   }
-  h += '<div class="da-meta">' + period + '　記録 ' + d.days + '日分</div>';
+  const range = (d.periodDays && d.days < d.periodDays) ? '記録 ' + d.days + '回分（全部）' : (lab === '全部' ? '全部（' + d.days + '回分）' : lab + '分');
+  h += '<div class="da-meta">' + range + '：' + daEsc(d.periodFrom) + (d.days > 1 ? '〜' + daEsc(d.periodTo) : '') + '</div>';
   // GAS が古い版（v11 より前）のときは、グラフ用のデータが返ってこない
   if (d.wave === undefined) {
     return h + '<div class="da-row" style="color:#b45309;">サーバー側（GAS）が古い版のため、グラフを表示できません。GAS を最新版に置き換え、「新バージョン」でデプロイしてください。</div>' + daPeers(d);
   }
   if (d.days < d.minDays) {
-    return h + daWave(d) + '<div class="da-meta">この期間の記録が' + d.minDays + '日分たまると分析を表示します（あと' + (d.minDays - d.days) + '日）。</div>' + daPeers(d);
+    return h + daWave(d) + '<div class="da-meta">記録が' + d.minDays + '回分たまると分析を表示します（あと' + (d.minDays - d.days) + '回）。</div>' + daPeers(d);
   }
   // 並び：① 調子の波 → ② 今のテーマ（進み具合） → ③ 仲間からの反応 → 次の稽古へ
   return h + daWave(d) + daFocus(d) + daPeers(d) + daNext(d)
-    + '<div class="da-note" style="margin-top:10px;">※同じ日に複数回出した日は最後の1回、Q5を複数選んだ日は「うまく→少し→できず」の順で1つに数えています</div>';
+    + '<div class="da-note" style="margin-top:10px;">※同じ日に複数回出した日は項目ごとに最新の記入、Q5を複数選んだ日は「うまく→少し→できず」の順で1つに数えています</div>';
 }
 
 // 名前以外をクリア
