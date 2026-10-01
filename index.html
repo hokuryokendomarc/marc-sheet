@@ -304,6 +304,13 @@ window.addEventListener('load', function () {
   .da-period { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: rgba(26,58,107,0.08); border-radius: 999px; padding: 3px; margin: 6px 0 8px; }
   .da-period button { min-height: 32px !important; border: none; border-radius: 999px; background: transparent; color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; }
   .da-period button.on { background: var(--primary); color: #fff; }
+  .da-period button { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; min-height: 40px !important; }
+  .da-period button small { font-size: 9.5px; font-weight: 500; opacity: .8; }
+  .da-period button.empty:not(.on) { opacity: .5; }
+  .da-empty { background: var(--surface); border-radius: 12px; padding: 12px; margin-top: 6px; font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+  .da-empty-s { font-size: 11.5px; font-weight: 400; color: var(--ink-muted); margin-top: 2px; }
+  .da-empty-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .da-empty-btns button { min-height: 36px !important; padding: 0 12px; border: 1.5px solid var(--primary); border-radius: 999px; background: var(--surface); color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
   .da-bar-block { background: var(--surface); border-radius: 10px; padding: 8px 10px 6px; margin-bottom: 6px; }
   .da-bar-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 12px; }
   .da-bar-head b { color: var(--ink-soft); font-size: 13px; }
@@ -1794,8 +1801,7 @@ function submitDiary(withAnalysis) {
 // ===== 日記の分析（期間を選べる：1週間／1か月／3か月／全期間） =====
 // GAS の analyzeDiary が数えた結果をそのまま表示する（文章による推測はしない）。
 const DA_PERIODS = [ { d: 7, label: '1週間' }, { d: 30, label: '1か月' }, { d: 90, label: '3か月' }, { d: 0, label: '全期間' } ];
-const LS_DA_PERIOD = 'marc_da_period'; // 最後に選んだ期間（端末ごと）
-let daName = '', daDays = 30, daReq = 0;
+let daName = '', daDays = 30, daReq = 0, daCounts = null; // 開くたびに「1か月」から（前回の期間は覚えない）
 function daEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; });
 }
@@ -1807,7 +1813,9 @@ function daHead() {
   return '<div class="da-head">📊 日記の分析<button type="button" onclick="daHide()">閉じる</button></div>'
     + '<div class="da-period" role="group" aria-label="期間">'
     + DA_PERIODS.map(function(p) {
-        return '<button type="button" class="' + (p.d === daDays ? 'on' : '') + '" aria-pressed="' + (p.d === daDays) + '" onclick="daSetPeriod(' + p.d + ')">' + p.label + '</button>';
+        const c = daCounts ? daCounts[p.d] : null;
+        return '<button type="button" class="' + (p.d === daDays ? 'on' : '') + (c === 0 ? ' empty' : '') + '" aria-pressed="' + (p.d === daDays) + '" onclick="daSetPeriod(' + p.d + ')">'
+          + p.label + (c != null ? '<small>' + c + '日分</small>' : '') + '</button>';
       }).join('')
     + '</div>';
 }
@@ -1826,20 +1834,12 @@ function daReveal() {
 function daSetPeriod(d) {
   if (d === daDays) return;
   daDays = d;
-  try { localStorage.setItem(LS_DA_PERIOD, String(d)); } catch (e) {}
   daLoad(daName);
 }
 function daLoad(name) {
   const el = document.getElementById('diary-analysis');
   if (!el) return;
   daName = String(name || '').replace(/[　\s]+/g, '');
-  if (!daLoad._init) {
-    daLoad._init = true;
-    let saved = null;
-    try { saved = localStorage.getItem(LS_DA_PERIOD); } catch (e) {}
-    const v = saved === null ? NaN : parseInt(saved, 10);
-    if (DA_PERIODS.some(function(p) { return p.d === v; })) daDays = v;
-  }
   const req = ++daReq; // 期間を素早く切り替えたとき、古い結果で上書きしない
   el.innerHTML = daHead() + '<div class="da-meta">分析中…</div>';
   el.style.display = 'block';
@@ -1849,6 +1849,7 @@ function daLoad(name) {
       if (req !== daReq) return;
       const json = JSON.parse(text);
       if (json.status !== 'ok') throw new Error(json.message || 'error');
+      if (json.periodCounts) daCounts = json.periodCounts;
       el.innerHTML = daHead() + daRender(json);
     })
     .catch(function() {
@@ -2070,7 +2071,19 @@ function daRender(d) {
   const period = d.periodDays ? (daEsc(d.periodFrom) + '〜' + daEsc(d.periodTo) + '（' + d.periodDays + '日間）')
                               : ('全期間' + (d.periodFrom ? '（最初の日記 ' + daEsc(d.periodFrom) + '）' : ''));
   if (!d.days) {
-    return '<div class="da-meta">' + period + '<br>この期間の日記の記録が見つかりません。提出直後は反映まで少しかかることがあります。</div>' + daPeers(d);
+    // 選んだ期間に記録がない：自動で期間は変えず、記録のある期間を案内する
+    const lab = (DA_PERIODS.find(function(p) { return p.d === d.periodDays; }) || {}).label || 'この期間';
+    let msg = '<div class="da-empty"><div>' + lab + 'の間に、日記の記録がありません。</div>';
+    if (d.lastRecord) msg += '<div class="da-empty-s">最後の記録：' + daEsc(d.lastRecord) + '</div>';
+    const alt = DA_PERIODS.filter(function(p) { return d.periodCounts && d.periodCounts[p.d] > 0; });
+    if (alt.length) {
+      msg += '<div class="da-empty-btns">' + alt.map(function(p) {
+        return '<button type="button" onclick="daSetPeriod(' + p.d + ')">' + p.label + 'で見る（' + d.periodCounts[p.d] + '日分）</button>';
+      }).join('') + '</div>';
+    } else {
+      msg += '<div class="da-empty-s">提出直後は、反映まで少しかかることがあります。</div>';
+    }
+    return '<div class="da-meta">' + period + '</div>' + msg + '</div>' + daPeers(d);
   }
   h += '<div class="da-meta">' + period + '　記録 ' + d.days + '日分</div>';
   // GAS が古い版（v11 より前）のときは、グラフ用のデータが返ってこない
